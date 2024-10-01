@@ -15,7 +15,7 @@ export default function Layout({
   }, []);
 
   return (
-    <div className="bg-gray-200 flex max-w-7xl w-full h-screen flex-col items-center overflow-auto">
+    <div className="bg-gray-200 flex max-w-7xl w-full h-full flex-col items-center">
       <Header />
       <div className="flex justify-center max-w-7xl w-full">
         <UserSideNav />

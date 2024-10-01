@@ -1,17 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { InputWithLabel } from "@/app/_components/InputWithLabel";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckboxWithText } from "@/app/_components/CheckBox";
 import { InputFile } from "@/app/_components/InputFile";
 import { Button } from "@/components/ui/button";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 const Page = () => {
-  const methods = useForm();
-  const { handleSubmit } = methods;
+  const methods = useForm({
+    defaultValues: {
+      formType: "first-time",
+      isCardExpired: false,
+      isCardLostorDestroy: false,
+      isChangeFirstName: false,
+      isChangeFullName: false,
+      isChangeLastName: false,
+      isDestroy: false,
+      others: false,
+    },
+  });
+  const { handleSubmit, control, getValues, watch } = methods;
   const onSubmit = handleSubmit((data) => console.log(data));
+  watch("others");
 
   return (
     <FormProvider {...methods}>
@@ -48,72 +60,104 @@ const Page = () => {
           <span className="w-full h-[1px] bg-slate-200"></span>
 
           <p>ความประสงค์</p>
-          <RadioGroup className="flex gap-16" defaultValue="first">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="first"
-                id="r1"
-                className="border-slate-400"
-              />
-              <Label className="font-normal text-slate-800" htmlFor="r1">
-                ขอมีบัตรครั้งแรก
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="new"
-                id="r2"
-                className="border-slate-400"
-              />
-              <Label className="font-normal text-slate-800" htmlFor="r2">
-                ขอบัตรใหม่
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="change"
-                id="r3"
-                className="border-slate-400"
-              />
-              <Label className="font-normal text-slate-800" htmlFor="r3">
-                ขอเปลี่ยนบัตร
-              </Label>
-            </div>
-          </RadioGroup>
+          <Controller
+            control={control}
+            name="formType"
+            render={({ field }) => (
+              <RadioGroup
+                onValueChange={field.onChange}
+                defaultValue="first-time"
+                className="flex gap-16"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="first-time"
+                    id="first-time"
+                    className="border-slate-400"
+                  />
+                  <Label
+                    className="font-normal text-slate-800"
+                    htmlFor="first-time"
+                  >
+                    ขอมีบัตรครั้งแรก
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="new-card"
+                    id="new-card"
+                    className="border-slate-400"
+                  />
+                  <Label
+                    className="font-normal text-slate-800"
+                    htmlFor="new-card"
+                  >
+                    ขอบัตรใหม่
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="change-card"
+                    id="change-card"
+                    className="border-slate-400"
+                  />
+                  <Label
+                    className="font-normal text-slate-800"
+                    htmlFor="change-card"
+                  >
+                    ขอเปลี่ยนบัตร
+                  </Label>
+                </div>
+              </RadioGroup>
+            )}
+          />
 
           <span className="w-full h-[1px] bg-slate-200"></span>
 
           <p>เหตุผล</p>
           <div className="grid grid-cols-4 gap-8 items-center">
+            <CheckboxWithText id="isCardExpired" label="บัตรหมดอายุ" />
             <CheckboxWithText
-              id="expired"
-              onChange={(e) => {
-                console.log(e);
-              }}
-              label="บัตรหมดอายุ"
+              id="isCardLostorDestroy"
+              label="บัตรหายหรือถูกทำลาย"
             />
-            <CheckboxWithText id="destroyed" label="บัตรหายหรือถูกทำลาย" />
-            <CheckboxWithText id="broken" label="บัตรชำรุด" />
-            <CheckboxWithText id="renamed" label="เปลี่ยนชื่อ" />
-            <CheckboxWithText id="resurnamed" label="เปลี่ยนนามสกุล" />
-            <CheckboxWithText id="refullnamed" label="เปลี่ยนชื่อและนามสกุล" />
+            <CheckboxWithText id="isDestroy" label="บัตรชำรุด" />
+            <CheckboxWithText id="isChangeFirstName" label="เปลี่ยนชื่อ" />
+            <CheckboxWithText id="isChangeLastName" label="เปลี่ยนนามสกุล" />
+            <CheckboxWithText
+              id="isChangeFullName"
+              label="เปลี่ยนชื่อและนามสกุล"
+            />
             <CheckboxWithText id="others" label="อื่นๆ(โปรดระบุ)" />
-            <InputWithLabel type="string" name="others" />
+            <InputWithLabel
+              type="string"
+              disabled={!getValues("others")}
+              name="otherReason"
+            />
           </div>
 
           <span className="w-full h-[1px] bg-slate-200"></span>
 
           <p>เอกสาร</p>
           <div className="grid grid-cols-2 gap-8">
-            <InputFile label="สำเนาบัตรประชาชน" id="ident-no" />
-            <InputFile label="รูปถ่ายขนาด 1 นิ้ว" id="picture" />
+            <InputFile label="สำเนาบัตรประชาชน" name="nameent-no" />
+            <InputFile label="รูปถ่ายขนาด 1 นิ้ว" name="picture" />
             <InputFile
               label="สำเนาประกาศนียบัตรผู้ผ่านการฝึกอบรมหลักสูตร"
-              id="certificate"
+              name="certificate"
             />
-            <InputFile label="หนังสือรับรองจากต้นสังกัด" id="referal-letter" />
-            <InputFile label="สำเนาบัตรประจำเครื่องวิทยุ (ถ้ามี)" id="reg-id" />
-            <InputFile label="เอกสารแจ้งความบัตรสูญหาย (ถ้ามี)" id="missing" />
+            <InputFile
+              label="หนังสือรับรองจากต้นสังกัด"
+              name="referal-letter"
+            />
+            <InputFile
+              label="สำเนาบัตรประจำเครื่องวิทยุ (ถ้ามี)"
+              name="reg-id"
+            />
+            <InputFile
+              label="เอกสารแจ้งความบัตรสูญหาย (ถ้ามี)"
+              name="missing"
+            />
             <InputWithLabel
               label="ข้อมูลเพิ่มเติม"
               name="additional"
@@ -176,10 +220,9 @@ const Page = () => {
           </RadioGroup>
 
           <div className="w-full flex items-center justify-center gap-8">
-            <Button className="w-28" variant="outline">
-              ยกเลิก
+            <Button className="w-28" type="submit">
+              บันทึกข้อมูล
             </Button>
-            <Button className="w-28">บันทึกข้อมูล</Button>
           </div>
         </div>
       </form>

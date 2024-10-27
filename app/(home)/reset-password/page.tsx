@@ -139,11 +139,13 @@ const Page = () => {
                   type="password"
                   name="newPassword"
                   label="รหัสผ่านใหม่"
+                  rule={{ required: true, minLength: 8 }}
                 />
                 <InputWithLabel
                   type="password"
                   name="newPassword2"
                   label="ยืนยันรหัสผ่านใหม่"
+                  rule={{ required: true, minLength: 8 }}
                 />
               </>
             )}

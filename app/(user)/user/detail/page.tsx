@@ -51,7 +51,6 @@ const Page = () => {
   } = methods;
   const onSubmit = handleSubmit(async (data) => {
     delete data.password;
-    console.log(data);
     data.birthDate = new Date(data.birthDate.startDate).toString();
     if (isSameAddress) {
       data.currentAddressNumber = getValues("registrationAddressNumber");
@@ -122,8 +121,6 @@ const Page = () => {
   const [changeSuccess, setChangeSuccess] = useState(false);
   const changePassword = async () => {
     if (getValues("newPassword") != getValues("newPassword2")) {
-      console.log(getValues("newPassword"));
-      console.log(getValues("newPassword2"));
       setError("newPassword", {
         type: "notMatch",
         message: "รหัสผ่านไม่ตรงกัน",
@@ -230,11 +227,13 @@ const Page = () => {
                           type="password"
                           name="newPassword"
                           label="รหัสผ่านใหม่"
+                          rule={{ required: true, minLength: 8 }}
                         />
                         <InputWithLabel
                           type="password"
                           name="newPassword2"
                           label="ยืนยันรหัสผ่านใหม่"
+                          rule={{ required: true, minLength: 8 }}
                         />
                         <Button onClick={changePassword}>ยืนยัน</Button>
                       </>

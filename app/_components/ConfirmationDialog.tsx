@@ -21,6 +21,7 @@ interface ConfirmationDialogProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
+  onCancel?: () => void;
 }
 
 const ConfirmationDialog = (props: ConfirmationDialogProps) => {
@@ -37,11 +38,15 @@ const ConfirmationDialog = (props: ConfirmationDialogProps) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           {props.cancelText && (
-            <AlertDialogCancel>{props.cancelText}</AlertDialogCancel>
+            <AlertDialogCancel onClick={props.onCancel}>
+              {props.cancelText}
+            </AlertDialogCancel>
           )}
-          <AlertDialogAction onClick={props.onConfirm}>
-            {props.confirmText}
-          </AlertDialogAction>
+          {props.confirmText && (
+            <AlertDialogAction onClick={props.onConfirm}>
+              {props.confirmText}
+            </AlertDialogAction>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

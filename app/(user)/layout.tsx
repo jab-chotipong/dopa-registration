@@ -1,6 +1,8 @@
 "use client";
 import Header from "@/app/_components/Header";
-import UserSideNav from "@/app/_components/side-nav/UserSideNav";
+import UserSideNav, {
+  MobileUserNav,
+} from "@/app/_components/side-nav/UserSideNav";
 import { useEffect, useState } from "react";
 
 export default function Layout({
@@ -8,18 +10,15 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [render, setRender] = useState<boolean>(false);
-
-  useEffect(() => {
-    setRender(true);
-  }, []);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   return (
     <div className="bg-gray-200 flex max-w-7xl w-full h-full flex-col items-center">
-      <Header />
+      <Header setMenuOpen={() => setIsMenuOpen(!isMenuOpen)} />
       <div className="flex justify-center max-w-7xl w-full">
         <UserSideNav />
-        <div className="p-6 w-full">{children}</div>
+        <MobileUserNav isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+        <div className="md:p-6 w-full">{children}</div>
       </div>
     </div>
   );

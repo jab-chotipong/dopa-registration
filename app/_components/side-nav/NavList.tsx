@@ -7,15 +7,22 @@ interface NavListProps {
   text: string;
   icon: ReactNode;
   selected?: boolean;
+  type?: string;
 }
 
-const NavList = ({ link, text, icon }: NavListProps) => {
+const NavList = ({ link, text, icon, type }: NavListProps) => {
   const searchParams = useSearchParams();
-  const selected = searchParams.get("state");
+  const selected = searchParams.get("status");
   const pathname = usePathname();
+  const lastPath = pathname.split("/")[pathname.split("/").length - 1];
 
   const handleSelectedList = () => {
-    if (selected && selected == link.query?.state) {
+    if (
+      (selected &&
+        selected == link.query?.status &&
+        pathname.startsWith(link.href)) ||
+      (type == lastPath && type != "form-request")
+    ) {
       return "bg-primary text-white";
     } else if (!selected && pathname == link.href) {
       return "bg-primary text-white";

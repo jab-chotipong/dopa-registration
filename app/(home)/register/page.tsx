@@ -40,13 +40,13 @@ const Page = () => {
   return (
     <FormProvider {...methods}>
       {isSuccess ? (
-        <div className="flex w-full flex-col gap-8 items-center justify-end">
+        <div className="flex w-full flex-col gap-8 items-center justify-center">
           <IoIosCheckmarkCircle className="w-24 h-24 text-green-500" />
           <h3 className="text-2xl font-bold text-blue-700">
             สมัครสมาชิกสำเร็จ
           </h3>
           <Link href="/login" className="w-1/2">
-            <Button className="w-full xl:w-2/3">เข้าสู่ระบบ</Button>
+            <Button className="w-full">เข้าสู่ระบบ</Button>
           </Link>
         </div>
       ) : (

@@ -2,7 +2,7 @@
 import AdminFilter from "@/app/_components/AdminFilter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BsEnvelope,
   BsEnvelopeCheck,
@@ -26,62 +26,148 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
-const filters = [
-  {
-    text: "ทั้งหมด",
-    icon: <BsEnvelope className="text-blue-600 text-xl" />,
-    color: "blue",
-    value: 2243,
-  },
-  {
-    text: "ยังไม่มีสิทธิ์",
-    icon: <BsEnvelopeDash className="text-orange-600 text-xl" />,
-    color: "orange",
-    value: 703,
-  },
-  {
-    text: "บัตรยังไม่หมดอายุ",
-    icon: <BsEnvelopeCheck className="text-green-600 text-xl" />,
-    color: "green",
-    value: 1230,
-  },
-  {
-    text: "บัตรหมดอายุ",
-    icon: <BsEnvelopeExclamation className="text-purple-600 text-xl" />,
-    color: "purple",
-    value: 310,
-  },
-];
+import { userAPI } from "@/app/_lib/apis/user";
+import { useRouter, useSearchParams } from "next/navigation";
+import dayjs from "dayjs";
+import { FormProvider, useForm } from "react-hook-form";
+import { formatSearchDate } from "@/app/_lib/utils";
+import CalendarInput from "@/app/_components/CalendarInput";
+import { InputWithLabel } from "@/app/_components/InputWithLabel";
 
 const Page = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("ทั้งหมด");
+  const router = useRouter();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  const searchParams = useSearchParams();
+  const [user, setUser] = useState([]);
+
+  const [statusCount, setStatusCount] = useState<any>({
+    activeCardCount: 0,
+    inActiveCardCount: 0,
+    expiredCardCount: 0,
+    allCardCount: 0,
+  });
+  const [filters, setFilters] = useState([
+    {
+      text: "ทั้งหมด",
+      icon: <BsEnvelope className="text-blue-600 text-xl" />,
+      color: "blue",
+      status: "",
+      count: "allCardCount",
+    },
+    {
+      text: "ยังไม่มีสิทธิ์",
+      status: "inactive",
+      icon: <BsEnvelopeDash className="text-orange-600 text-xl" />,
+      color: "orange",
+      count: "inActiveCardCount",
+    },
+    {
+      text: "บัตรยังไม่หมดอายุ",
+      status: "active",
+      icon: <BsEnvelopeCheck className="text-green-600 text-xl" />,
+      color: "green",
+      count: "activeCardCount",
+    },
+    {
+      text: "บัตรหมดอายุ",
+      status: "expired",
+      icon: <BsEnvelopeExclamation className="text-purple-600 text-xl" />,
+      color: "purple",
+      count: "expiredCardCount",
+    },
+  ]);
+  const [page] = useState(searchParams.get("page") || "1");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [totalPage, setTotalPage] = useState(0);
+
+  const status = searchParams.get("status");
+  const methods = useForm();
+  const { handleSubmit, control, getValues, watch, setValue } = methods;
+
+  const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
+    getUser(status, data.search, page, formatSearchDate(data.date));
+    router.push(
+      `/admin/report/members?status=${status}&search=${data.search}&page=${page}`
+    );
+  });
+
+  const getUser = async (
+    status: string | null,
+    search: string | null,
+    page: string | null,
+    date?: any
+  ) => {
+    const res = await userAPI.getUser(token!, {
+      status,
+      search,
+      page,
+      startDate: date?.startDate,
+      endDate: date?.endDate,
+      size: 10,
+    });
+    const { pagination, data, statusCount } = res.data.data;
+    setUser(data);
+    setStatusCount({
+      ...statusCount,
+      allCardCount: Object.values(statusCount).reduce(
+        (prev: any, cur: any) => prev + cur,
+        0
+      ),
+    });
+    setTotalPage(pagination.totalPages);
+  };
+
+  const exportUser = async () => {
+    const date = getValues("date");
+    const q = date?.startDate && date?.endDate ? formatSearchDate(date) : null;
+    const res = await userAPI.exportUser(
+      {
+        search: getValues("search"),
+        status,
+        startDate: q ? q.startDate : null,
+        endDate: q ? q.endDate : null,
+      },
+      token!
+    );
+    const url = URL.createObjectURL(res.data);
+    window.open(url);
+  };
+
+  useEffect(() => {
+    getUser(status, search, page);
+  }, [status, page]);
+
   return (
     <div className="flex flex-col w-full h-full gap-6 text-slate-700">
       <p>สมาชิก</p>
       <div className="grid grid-cols-4 gap-8">
-        {filters.map((filter) => (
+        {filters.map((filter, i) => (
           <AdminFilter
+            key={i}
             {...filter}
-            onClick={() => setSelectedFilter(filter.text)}
-            isSelected={selectedFilter == filter.text}
+            value={statusCount[filter.count]}
+            onClick={() =>
+              router.push(
+                `/admin/report/members?status=${filter.status}&search=${search}&page=${page}`
+              )
+            }
+            isSelected={filter.status === status}
           />
         ))}
       </div>
-      <div className="flex gap-8">
-        <Input type="search" placeholder="ค้นหา" className="bg-white" />
-        <Input
-          type="search"
-          placeholder="เลือกวันที่เริ่มต้น"
-          className="bg-white"
-        />
-        <Input
-          type="search"
-          placeholder="เลือกวันที่เริ่มสิ้นสุด"
-          className="bg-white"
-        />
-        <Button>ดาวน์โหลด</Button>
-      </div>
+      <FormProvider {...methods}>
+        <form onSubmit={onSubmit} className="flex gap-8">
+          <InputWithLabel type="string" name="search" placeholder="ค้นหา" />
+          <CalendarInput id="date" placeholder="วันที่" />
+          <Button type="submit">ค้นหา</Button>
+          <Button variant="secondary" type="button" onClick={exportUser}>
+            ดาวน์โหลด
+          </Button>
+        </form>
+      </FormProvider>
       <div className="bg-slate-50 h-full w-full px-2 rounded-xl flex flex-col justify-between">
         <Table>
           <TableHeader>
@@ -94,49 +180,93 @@ const Page = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>นาย</TableCell>
-              <TableCell>กนกกร อินทรประสาท</TableCell>
-              <TableCell>คำร้องจัดส่งแล้ว</TableCell>
-              <TableCell>22/02/67</TableCell>
-              <TableCell>กรุงเทพมหานคร</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>นาง</TableCell>
-              <TableCell>ธรรมิกา พันธ์ภูผา</TableCell>
-              <TableCell>คำร้องจัดส่งแล้ว</TableCell>
-              <TableCell>02/03/67</TableCell>
-              <TableCell>พระนครศรีอยุธยา</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>นาง</TableCell>
-              <TableCell>ศศิพร อุดมเอก</TableCell>
-              <TableCell>คำร้องใหม่</TableCell>
-              <TableCell>12/03/67</TableCell>
-              <TableCell>อุบลราชธานี</TableCell>
-            </TableRow>
+            {user.map((u: any, i) => (
+              <TableRow key={i}>
+                <TableCell>{u.titleTh}</TableCell>
+                <TableCell>
+                  {u.firstNameTh} {u.lastNameTh}
+                </TableCell>
+                <TableCell>คำร้องจัดส่งแล้ว</TableCell>
+                <TableCell>
+                  {dayjs(new Date(u.cardExpired))
+                    .locale("th")
+                    .format("DD/MM/YYYY")}
+                </TableCell>
+                <TableCell>{u.registrationProvince}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
-          <TableBody />
         </Table>
         <Pagination className="items-end justify-end">
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                href={`/admin/report/members?status=${status}&page=${
+                  parseInt(page) - 1
+                }&search=${search}`}
+              />
             </PaginationItem>
+            {totalPage <= 4 ? (
+              <>
+                {[...Array(totalPage)].map((p, i) => (
+                  <PaginationItem key={i}>
+                    <PaginationLink
+                      className={parseInt(page) == i + 1 ? "text-primary" : ""}
+                      href={`/admin/report/members?status=${status}&page=${
+                        i + 1
+                      }&search=${search}`}
+                    >
+                      {i + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+              </>
+            ) : (
+              <>
+                <PaginationItem>
+                  <PaginationLink
+                    className={"text-primary"}
+                    href={`/admin/report/members?status=${status}&page=${page}&search=${search}`}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/admin/report/members?status=${status}&page=${
+                      page + 1
+                    }&search=${search}`}
+                  >
+                    {page + 1}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/admin/report/members?status=${status}&page=${
+                      page + 2
+                    }&search=${search}`}
+                  >
+                    {page + 2}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/admin/report/members?status=${status}&page=${totalPage}&search=${search}`}
+                  >
+                    {totalPage}
+                  </PaginationLink>
+                </PaginationItem>
+              </>
+            )}
             <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                href={`/admin/report/members?status=${status}&page=${
+                  parseInt(page) + 1
+                }&search=${search}`}
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

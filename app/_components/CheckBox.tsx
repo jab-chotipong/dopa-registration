@@ -1,18 +1,23 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 type CheckBoxProps = {
   id: string;
   label: string;
+  value?: boolean;
   className?: string;
-  onChange?: (e: any) => void;
+  disabled?: boolean;
+  onChange?: () => void;
 };
 
 export function CheckboxWithText({
   id,
   label,
+  value,
   className,
+  disabled = false,
   onChange,
 }: CheckBoxProps) {
   const { register, control } = useFormContext();
@@ -25,9 +30,13 @@ export function CheckboxWithText({
         <div className={`items-top flex space-x-2 ${className}`}>
           <Checkbox
             id={id}
-            checked={field.value}
+            disabled={disabled}
+            checked={field.value || value}
             className="border-slate-300"
-            onCheckedChange={field.onChange}
+            onCheckedChange={() => {
+              field.onChange;
+              onChange && onChange();
+            }}
             defaultChecked={false}
           />
           <div className="grid gap-1.5 leading-none">

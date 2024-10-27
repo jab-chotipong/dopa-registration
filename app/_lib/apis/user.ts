@@ -1,4 +1,4 @@
-import { _get, _patch } from "./api";
+import { _delete, _get, _patch } from "./api";
 
 type userDetail = {
   id: number;
@@ -41,11 +41,79 @@ export const userAPI = {
     });
   },
 
-  patchMe: async (data: userDetail, token: string) => {
+  patchMe: async (data: any, token: string) => {
     return await _patch("user/me", data, {
       headers: {
         authorization: token,
       },
     });
+  },
+
+  getUser: async (token: string, query: any) => {
+    return await _get(
+      `user/all?status=${query.status}&search=${query.search ?? ""}&page=${
+        query.page
+      }&size=${query.size}${
+        query.startDate ? `&startDate=${query.startDate}` : ""
+      }${query.endDate ? `&endDate=${query.endDate}` : ""}`,
+      {
+        headers: {
+          authorization: token,
+        },
+      }
+    );
+  },
+
+  getAdmin: async (token: string, query: any) => {
+    return await _get(
+      `/user/admin?search=${query.search}&page=${query.page}&pageSize=8`,
+      {
+        headers: {
+          authorization: token,
+        },
+      }
+    );
+  },
+
+  updateAdmin: async (token: string, payload: any) => {
+    return await _patch(`/user/${payload.id}/admin`, payload, {
+      headers: {
+        authorization: token,
+      },
+    });
+  },
+
+  patchAdmin: async (token: string, id: string) => {
+    return await _patch(
+      `/user/${id}/admin/restore`,
+      {},
+      {
+        headers: {
+          authorization: token,
+        },
+      }
+    );
+  },
+
+  deleteAdmin: async (token: string, id: string) => {
+    return await _delete(`/user/${id}/admin`, {
+      headers: {
+        authorization: token,
+      },
+    });
+  },
+
+  exportUser: async (query: any, token: string) => {
+    return await _get(
+      `/user/all/download?search=${query.search}&status=${query.status}${
+        query.startDate ? `&startDate=${query.startDate}` : ""
+      }${query.endDate ? `&endDate=${query.endDate}` : ""}`,
+      {
+        headers: {
+          authorization: token,
+        },
+        responseType: "blob",
+      }
+    );
   },
 };

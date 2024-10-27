@@ -1,9 +1,14 @@
-import { useFormContext } from "react-hook-form";
+import { useEffect } from "react";
+import { FieldValues, RegisterOptions, useFormContext } from "react-hook-form";
 import { GoPlusCircle } from "react-icons/go";
 
 type InputFileProps = {
   label: string;
   name: string;
+  disabled?: boolean;
+  required?: boolean;
+  onClick?: () => void;
+  rule?: RegisterOptions<FieldValues, string> | undefined;
 };
 
 export function InputFile(props: InputFileProps) {
@@ -16,13 +21,16 @@ export function InputFile(props: InputFileProps) {
   const file = watch(props.name);
 
   return (
-    <div className="text-blue-800 w-full flex flex-col gap-4 border border-slate-300 p-4 rounded-lg">
+    <div
+      className="text-blue-800 w-full flex flex-col gap-4 border border-slate-300 p-4 rounded-lg relative"
+      onClick={props.onClick}
+    >
       <p>{props.label}</p>
       <label
         htmlFor={props.name}
         className="flex gap-4 items-center w-full bg-slate-200 p-2 rounded-lg justify-center border border-dashed border-blue-800"
       >
-        {file[0] ? (
+        {file && file[0] ? (
           <p className="text-blue-800">{file[0]?.name}</p>
         ) : (
           <>
@@ -30,13 +38,23 @@ export function InputFile(props: InputFileProps) {
             <p className="text-blue-800">เพิ่ม{props.label}</p>
           </>
         )}
-        <input
-          id={props.name}
-          type="file"
-          className="hidden"
-          {...register(props.name)}
-        />
+        {typeof file === "string" ? (
+          <p>{file}</p>
+        ) : (
+          <input
+            id={props.name}
+            disabled={props.disabled}
+            type="file"
+            className="hidden"
+            {...register(props.name, { required: props.required })}
+          />
+        )}
       </label>
+      {errors[props.name] && (
+        <p className="text-[12px] absolute top-[-16px] right-0 text-red-500">
+          กรุณาเพิ่มไฟล์
+        </p>
+      )}
     </div>
   );
 }

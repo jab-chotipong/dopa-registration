@@ -20,10 +20,14 @@ export function InputFile(props: InputFileProps) {
 
   const file = watch(props.name);
 
+  const handleOnClick = () => {
+    props.disabled && props.onClick && props.onClick();
+  };
+
   return (
     <div
       className="text-blue-800 w-full flex flex-col gap-4 border border-slate-300 p-4 rounded-lg relative"
-      onClick={props.onClick}
+      onClick={handleOnClick}
     >
       <p>{props.label}</p>
       <label

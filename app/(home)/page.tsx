@@ -11,12 +11,12 @@ const Home = () => {
         className="object-cover h-1/2 w-1/2"
       />
       <h3 className="text-2xl font-bold text-blue-700">DOPA REGISTRATION</h3>
-      <p>
+      {/* <p>
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus
         unde, impedit eaque eum ratione sint exercitationem facilis nostrum ut
         saepe reiciendis dolores eveniet explicabo commodi nobis. Inventore
         incidunt nesciunt totam?
-      </p>
+      </p> */}
       <div className="flex gap-4 mt-10">
         <Link href="/register">
           <Button className="w-28" variant="outline">

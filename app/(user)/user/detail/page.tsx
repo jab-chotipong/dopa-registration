@@ -51,7 +51,12 @@ const Page = () => {
   } = methods;
   const onSubmit = handleSubmit(async (data) => {
     delete data.password;
-    data.birthDate = new Date(data.birthDate.startDate).toString();
+    console.log(getValues("birthDate"));
+    if (getValues("birthDate") != null) {
+      data.birthDate = new Date(getValues("birthDate").startDate).toString();
+    } else {
+      setError("birthDate", { type: "required" });
+    }
     if (isSameAddress) {
       data.currentAddressNumber = getValues("registrationAddressNumber");
       data.currentVillageNumber = getValues("registrationVillageNumber");
@@ -88,7 +93,8 @@ const Page = () => {
 
   const getUser = async () => {
     let res = await userAPI.getMe(token!);
-    res.data.data.birthDate = {
+    console.log(res.data.data.birthDate);
+    res.data.data.birthDate = res.data.data.birthDate && {
       startDate: new Date(res.data.data.birthDate),
       endDate: new Date(res.data.data.birthDate),
     };
@@ -279,20 +285,36 @@ const Page = () => {
           <InputWithLabel
             type="string"
             name="lastNameEn"
-            label="นามสกุล (ภาษภาษาอังกฤษ)"
+            label="นามสกุล (ภาษาอังกฤษ)"
             rule={{ required: true }}
           />
           <InputWithLabel
             type="string"
             name="citizenId"
             label="หมายเลขบัตรประจำตัวประชาชน"
-            rule={{ required: true }}
+            maxLength={13}
+            rule={{
+              required: true,
+              maxLength: 13,
+              pattern: {
+                value: /^[1-9]\d*$/,
+                message: "กรุณากรอกข้อมูลให้ถูกต้อง",
+              },
+            }}
           />
           <InputWithLabel
             type="string"
             name="phoneNumber"
             label="โทรศัพท์"
-            rule={{ required: true }}
+            maxLength={10}
+            rule={{
+              required: true,
+              maxLength: 10,
+              pattern: {
+                value: /^[0-9]\d*$/,
+                message: "กรุณากรอกข้อมูลให้ถูกต้อง",
+              },
+            }}
           />
           <CalendarInput
             label="วันเกิด"
@@ -330,7 +352,7 @@ const Page = () => {
           <InputWithLabel
             type="string"
             name="registrationVillageNumber"
-            label="หมู่บ้าน"
+            label="หมู่"
             rule={{ required: true }}
           />
           <InputWithLabel
@@ -361,7 +383,8 @@ const Page = () => {
             type="string"
             name="registrationPostalCode"
             label="รหัสไปรษณีย์"
-            rule={{ required: true }}
+            maxLength={6}
+            rule={{ required: true, maxLength: 6 }}
           />
         </div>
 
@@ -420,7 +443,8 @@ const Page = () => {
                 type="string"
                 name="currentPostalCode"
                 label="รหัสไปรษณีย์"
-                rule={{ required: true }}
+                maxLength={6}
+                rule={{ required: true, maxLength: 6 }}
               />
             </>
           )}

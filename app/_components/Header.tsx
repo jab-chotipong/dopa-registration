@@ -19,7 +19,7 @@ const Header = ({ ...props }: HeaderProps) => {
   const getUser = async () => {
     let res = await userAPI.getMe(token!);
     const { firstNameTh, lastNameTh } = res.data.data;
-    setName(firstNameTh + " " + lastNameTh);
+    if (firstNameTh && lastNameTh) setName(firstNameTh + " " + lastNameTh);
   };
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const Header = ({ ...props }: HeaderProps) => {
         )}
         <div className="flex justify-center items-center gap-4">
           <FaUserCircle className="w-6 h-6" />
-          {name ? <p>{name}</p> : <Skeleton className="h-4 w-[120px]" />}
+          {name != null && <p>{name}</p>}
         </div>
       </div>
     </div>

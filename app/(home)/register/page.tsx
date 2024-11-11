@@ -24,7 +24,18 @@ const Page = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const { handleSubmit, setError } = methods;
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (data.password !== data.confirmPassword) return;
+    if (data.password !== data.confirmPassword) {
+      console.log("notmatch");
+      setError("password", {
+        type: "notMatch",
+        message: "รหัสผ่านไม่ตรงกัน",
+      });
+      setError("confirmPassword", {
+        type: "notMatch",
+        message: "รหัสผ่านไม่ตรงกัน",
+      });
+      return;
+    }
     let res = await _post("/auth/register", data).catch((e) => {
       if (e.status === 409) {
         setError("username", { type: "duplicated" });

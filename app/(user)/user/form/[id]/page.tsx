@@ -396,6 +396,7 @@ const Form = () => {
             />
             <InputWithLabel
               type="string"
+              rule={{ required: getValues("others") }}
               disabled={!getValues("others") || disabledField()}
               name="otherReason"
             />

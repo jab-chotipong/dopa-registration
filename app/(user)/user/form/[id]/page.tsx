@@ -75,12 +75,13 @@ const Form = () => {
     getValues,
     watch,
     setValue,
+    setError,
     formState: { errors },
   } = methods;
   const onSubmit = handleSubmit(async (data: any) => {
+    console.log(data);
     if (data.formType !== "first-time") {
-      if (!checkReason(data)) {
-        setReasonError(true);
+      if (!checkReason()) {
         return;
       }
     }
@@ -123,29 +124,39 @@ const Form = () => {
       });
     }
   });
-  const [others, formType] = watch(["others", "formType"]);
+  const [formType] = watch(["formType"]);
+  const [
+    isCardExpired,
+    isCardLostorDestroy,
+    isCardDestroy,
+    isChangeFirstName,
+    isChangeLastName,
+    isChangeFullName,
+    others,
+  ] = watch([
+    "isCardExpired",
+    "isCardLostorDestroy",
+    "isCardDestroy",
+    "isChangeFirstName",
+    "isChangeLastName",
+    "isChangeFullName",
+    "others",
+  ]);
 
-  // const getFile = async (name: string) => {
-  //   const res = await fileAPI.getFile(token!, {
-  //     fileName: name,
-  //   });
-  // };
-
-  const checkReason = (data: any) =>
-    data.isCardExpired ||
-    data.isCardLostorDestroy ||
-    data.isCardDestroy ||
-    data.isChangeFirstName ||
-    data.isChangeLastName ||
-    data.isChangeFullName ||
-    data.others;
+  const checkReason = () =>
+    isCardExpired ||
+    isCardLostorDestroy ||
+    isCardDestroy ||
+    isChangeFirstName ||
+    isChangeLastName ||
+    isChangeFullName ||
+    others;
 
   const [noData, setNoData] = useState(false);
   const getUser = async () => {
     let res = await userAPI.getMe(token!);
     let data = res.data.data;
     if (data.firstNameTh == null) {
-      // check null
       setNoData(true);
     }
     setAddress({
@@ -325,7 +336,7 @@ const Form = () => {
           <span className="w-full h-[1px] bg-slate-200"></span>
           <div className="flex gap-4 items-center">
             <p>เหตุผล</p>
-            {reasonError && (
+            {!checkReason() && formType !== "first-time" && (
               <p className="text-red-500 text-[12px]">กรุณาใส่เหตุผล</p>
             )}
           </div>
@@ -396,7 +407,12 @@ const Form = () => {
             />
             <InputWithLabel
               type="string"
-              rule={{ required: getValues("others") }}
+              rule={{
+                required: {
+                  value: getValues("others"),
+                  message: "กรุณากรอกข้อมูล",
+                },
+              }}
               disabled={!getValues("others") || disabledField()}
               name="otherReason"
             />
@@ -479,8 +495,8 @@ const Form = () => {
                   <span className="w-full h-[1px] bg-slate-200"></span>
                   <div>
                     <p className="text-sm text-slate-700">
-                      ที่อยู่ : {address.registrationAddress.addressNumber}{" "}
-                      หมู่บ้าน {address.registrationAddress.villageNumber}{" "}
+                      ที่อยู่ : {address.registrationAddress.addressNumber} หมู่{" "}
+                      {address.registrationAddress.villageNumber} ถนน
                       {address.registrationAddress.road}{" "}
                       {address.registrationAddress.subDistrict}{" "}
                       {address.registrationAddress.district}{" "}
@@ -507,8 +523,8 @@ const Form = () => {
                   <span className="w-full h-[1px] bg-slate-200"></span>
                   <div>
                     <p className="text-sm text-slate-700">
-                      ที่อยู่ : {address.currentAddress.addressNumber}{" "}
-                      {address.currentAddress.villageNumber}{" "}
+                      ที่อยู่ : {address.currentAddress.addressNumber} หมู่
+                      {address.currentAddress.villageNumber} ถนน{" "}
                       {address.currentAddress.road}{" "}
                       {address.currentAddress.subDistrict}{" "}
                       {address.currentAddress.district}{" "}

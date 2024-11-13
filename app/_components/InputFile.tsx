@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { FieldValues, RegisterOptions, useFormContext } from "react-hook-form";
 import { GoPlusCircle } from "react-icons/go";
+import { IoMdClose } from "react-icons/io";
 
 type InputFileProps = {
   label: string;
@@ -15,6 +16,7 @@ export function InputFile(props: InputFileProps) {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
@@ -24,6 +26,10 @@ export function InputFile(props: InputFileProps) {
     props.disabled && props.onClick && props.onClick();
   };
 
+  useEffect(() => {
+    console.log(file);
+  }, [file]);
+
   return (
     <div
       className="text-blue-800 w-full flex flex-col gap-4 border border-slate-300 p-4 rounded-lg relative"
@@ -32,7 +38,7 @@ export function InputFile(props: InputFileProps) {
       <p>{props.label}</p>
       <label
         htmlFor={props.name}
-        className="flex gap-4 items-center w-full bg-slate-200 p-2 rounded-lg justify-center border border-dashed border-blue-800"
+        className="flex gap-4 items-center w-full bg-slate-200 p-2 rounded-lg justify-center border border-dashed border-blue-800 relative"
       >
         {file && file[0] ? (
           <p className="text-blue-800">{file[0]?.name}</p>
@@ -45,19 +51,29 @@ export function InputFile(props: InputFileProps) {
         {typeof file === "string" ? (
           <p>{file}</p>
         ) : (
-          <input
-            id={props.name}
-            disabled={props.disabled}
-            type="file"
-            className="hidden"
-            {...register(props.name, { required: props.required })}
-          />
+          <>
+            <input
+              id={props.name}
+              disabled={props.disabled}
+              type="file"
+              className="hidden"
+              {...register(props.name, { required: props.required })}
+            />
+          </>
         )}
       </label>
       {errors[props.name] && (
         <p className="text-[12px] absolute top-[-16px] right-0 text-red-500">
           กรุณาเพิ่มไฟล์
         </p>
+      )}
+      {file?.length > 0 && (
+        <IoMdClose
+          onClick={() => {
+            setValue(props.name, null);
+          }}
+          className="absolute right-4 cursor-pointer"
+        />
       )}
     </div>
   );

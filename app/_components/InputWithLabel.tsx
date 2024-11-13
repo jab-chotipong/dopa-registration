@@ -36,7 +36,7 @@ export function InputWithLabel({ ...props }: InputWithLabelProps) {
     <div
       className={`grid w-full items-center gap-1.5 relative ${props.className}`}
     >
-      {props.label && (
+      {(props.label || errors[props.name]) && (
         <div className="flex items-center justify-between">
           <Label
             className={`${
@@ -47,7 +47,7 @@ export function InputWithLabel({ ...props }: InputWithLabelProps) {
             {props.label}
           </Label>
           {errors[props.name] && (
-            <p className="text-[12px] text-left text-red-500">
+            <p className="text-[12px] text-left text-red-500 overflow-hidden text-ellipsis whitespace-nowrap">
               {handleErrors(errors[props.name]?.type)}
             </p>
           )}

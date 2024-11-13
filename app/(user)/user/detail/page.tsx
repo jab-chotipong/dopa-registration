@@ -412,7 +412,7 @@ const Page = () => {
               <InputWithLabel
                 type="string"
                 name="currentVillageNumber"
-                label="หมู่บ้าน"
+                label="หมู่"
                 rule={{ required: true }}
               />
               <InputWithLabel

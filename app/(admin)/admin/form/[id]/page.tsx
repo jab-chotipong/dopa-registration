@@ -104,17 +104,21 @@ const Page = () => {
     if (id === "request") return;
     const res = await formAPI.getFormById(id as string, token!);
     let data = res.data.data;
+    res.data.data.birthDate = res.data.data.birthDate && {
+      startDate: new Date(res.data.data.birthDate),
+      endDate: new Date(res.data.data.birthDate),
+    };
     data.trainingDate = {
       startDate: data.trainingDate,
       endDate: data.trainingDate,
     };
-    console.log(data);
     return data;
   };
 
   useEffect(() => {
     getForm();
   }, []);
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={onSubmit} className="flex flex-col gap-4 pt-4 md:pt-0">
@@ -129,6 +133,176 @@ const Page = () => {
                 ตามระเบียบกรมการปกครองว่าด้วยการสื่อสารกรมการปกครอง พ.ศ. ๒๕๕๘
               </p>
             </div>
+            <p>ข้อมูลส่วนตัว</p>
+            <div className="grid grid-cols-2 gap-8">
+              <InputWithLabel
+                type="string"
+                name="titleTh"
+                label="คำนำหน้าชื่อ"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="firstNameTh"
+                label="ชื่อ (ภาษาไทย)"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="lastNameTh"
+                label="นามสกุล (ภาษาไทย)"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="firstNameEn"
+                label="ชื่อ (ภาษาอังกฤษ)"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="lastNameEn"
+                label="นามสกุล (ภาษาอังกฤษ)"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="citizenId"
+                label="หมายเลขบัตรประจำตัวประชาชน"
+                maxLength={13}
+                rule={{
+                  maxLength: 13,
+                  pattern: {
+                    value: /^[1-9]\d*$/,
+                    message: "กรุณากรอกข้อมูลให้ถูกต้อง",
+                  },
+                }}
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="phoneNumber"
+                label="โทรศัพท์"
+                maxLength={10}
+                rule={{
+                  maxLength: 10,
+                  pattern: {
+                    value: /^[0-9]\d*$/,
+                    message: "กรุณากรอกข้อมูลให้ถูกต้อง",
+                  },
+                }}
+                disabled
+              />
+              <CalendarInput label="วันเกิด" id="birthDate" disabled asSingle />
+              <InputWithLabel
+                type="string"
+                name="nation"
+                label="สัญชาติ"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="religion"
+                label="ศาสนา"
+                disabled
+              />
+            </div>
+            <span className="w-full h-[1px] bg-slate-200"></span>
+            <p>ที่อยู่ตามทะเบียนบ้าน</p>
+            <div className="grid grid-cols-2 gap-8">
+              <InputWithLabel
+                type="string"
+                name="registrationAddressNumber"
+                label="บ้านเลขที่"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="registrationVillageNumber"
+                label="หมู่"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="registrationRoad"
+                label="ถนน"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="registrationSubDistrict"
+                label="แขวง/ตำบล"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="registrationDistrict"
+                label="เขต/อำเภอ"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="registrationProvince"
+                label="จังหวัด"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="registrationPostalCode"
+                label="รหัสไปรษณีย์"
+                maxLength={6}
+                disabled
+              />
+            </div>
+            <span className="w-full h-[1px] bg-slate-200"></span>
+            <p>ที่อยู่ปัจจุบัน</p>
+            <div className="grid grid-cols-2 gap-8">
+              <InputWithLabel
+                type="string"
+                name="currentAddressNumber"
+                label="บ้านเลขที่"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="currentVillageNumber"
+                label="หมู่"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="currentRoad"
+                label="ถนน"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="currentSubDistrict"
+                label="แขวง/ตำบล"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="currentDistrict"
+                label="เขต/อำเภอ"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="currentProvince"
+                label="จังหวัด"
+                disabled
+              />
+              <InputWithLabel
+                type="string"
+                name="currentPostalCode"
+                label="รหัสไปรษณีย์"
+                maxLength={6}
+                disabled
+              />
+            </div>
+            <span className="w-full h-[1px] bg-slate-200"></span>
+            <p>รับราชการ/ปฏิบัติงานสังกัด</p>
             <div className="grid grid-cols-2 gap-8">
               <InputWithLabel
                 type="string"
@@ -366,9 +540,8 @@ const Page = () => {
                     <span className="w-full h-[1px] bg-slate-200"></span>
                     <div>
                       <p className="text-sm text-slate-700">
-                        ที่อยู่ : ที่อยู่ :{" "}
-                        {getValues("registrationAddressNumber")}{" "}
-                        {getValues("registrationVillageNumber")}{" "}
+                        ที่อยู่ : {getValues("registrationAddressNumber")} หมู่{" "}
+                        {getValues("registrationVillageNumber")} ถนน{" "}
                         {getValues("registrationRoad")}{" "}
                         {getValues("registrationSubDistrict")}{" "}
                         {getValues("registrationDistrict")}{" "}
@@ -395,8 +568,8 @@ const Page = () => {
                     <span className="w-full h-[1px] bg-slate-200"></span>
                     <div>
                       <p className="text-sm text-slate-700">
-                        ที่อยู่ : {getValues("currentAddressNumber")}{" "}
-                        {getValues("currentVillageNumber")}{" "}
+                        ที่อยู่ : {getValues("currentAddressNumber")} หมู่{" "}
+                        {getValues("currentVillageNumber")} ถนน{" "}
                         {getValues("currentRoad")}{" "}
                         {getValues("currentSubDistrict")}{" "}
                         {getValues("currentDistrict")}{" "}

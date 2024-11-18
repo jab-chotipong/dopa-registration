@@ -66,7 +66,7 @@ const lists = [
     icon: <IoDocumentTextOutline />,
     sub: [
       {
-        text: "คำร้องประจำเวลา",
+        text: "คำร้องประจำช่วงเวลา",
         link: {
           href: "/admin/report/request",
           query: { status: "submit", search: "", page: "1" },

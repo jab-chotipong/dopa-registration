@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { FieldValues, RegisterOptions, useFormContext } from "react-hook-form";
+import {
+  FieldError,
+  FieldValues,
+  RegisterOptions,
+  useFormContext,
+} from "react-hook-form";
 import { GoPlusCircle } from "react-icons/go";
 import { IoMdClose } from "react-icons/io";
 
@@ -17,6 +22,7 @@ export function InputFile(props: InputFileProps) {
     register,
     watch,
     setValue,
+    setError,
     formState: { errors },
   } = useFormContext();
 
@@ -26,9 +32,16 @@ export function InputFile(props: InputFileProps) {
     props.disabled && props.onClick && props.onClick();
   };
 
-  useEffect(() => {
-    console.log(file);
-  }, [file]);
+  const handleFileError = (type: any) => {
+    switch (type) {
+      case "required":
+        return "กรุณาเพิ่มไฟล์";
+      case "maximum":
+        return "ขนาดไฟล์เกิน 2 MB";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div
@@ -38,18 +51,22 @@ export function InputFile(props: InputFileProps) {
       <p>{props.label}</p>
       <label
         htmlFor={props.name}
-        className="flex gap-4 items-center w-full bg-slate-200 p-2 rounded-lg justify-center border border-dashed border-blue-800 relative"
+        className="flex gap-4 items-center w-full bg-slate-200 p-2 rounded-lg justify-center border border-dashed overflow-hidden whitespace-nowrap text-ellipsis border-blue-800 relative"
       >
         {file && file[0] ? (
-          <p className="text-blue-800">{file[0]?.name}</p>
+          <p className="text-blue-800 text-ellipsis overflow-hidden">
+            {file[0]?.name}
+          </p>
         ) : (
           <>
             <GoPlusCircle className="w-5 h-5" />
-            <p className="text-blue-800">เพิ่ม{props.label}</p>
+            <p className="text-blue-800 text-ellipsis overflow-hidden">
+              เพิ่ม{props.label}
+            </p>
           </>
         )}
         {typeof file === "string" ? (
-          <p>{file}</p>
+          <p className="text-ellipsis overflow-hidden">{file}</p>
         ) : (
           <>
             <input
@@ -57,17 +74,25 @@ export function InputFile(props: InputFileProps) {
               disabled={props.disabled}
               type="file"
               className="hidden"
-              {...register(props.name, { required: props.required })}
+              {...register(props.name, {
+                required: props.required,
+                validate: {
+                  maximum: (v) => {
+                    if (v.length > 0)
+                      return v[0]?.size < 2097152 || "ขนาดไฟล์เกิน 2 MB";
+                  },
+                },
+              })}
             />
           </>
         )}
       </label>
       {errors[props.name] && (
         <p className="text-[12px] absolute top-[-16px] right-0 text-red-500">
-          กรุณาเพิ่มไฟล์
+          {handleFileError(errors[props.name]?.type)}
         </p>
       )}
-      {file?.length > 0 && (
+      {file?.length > 0 && props.disabled && (
         <IoMdClose
           onClick={() => {
             setValue(props.name, null);

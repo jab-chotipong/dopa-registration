@@ -147,13 +147,32 @@ const Page = () => {
     window.open(url);
   };
 
+  const headerText = () => {
+    switch (status) {
+      case "submit":
+        return "คำร้องใหม่";
+      case "re-submit":
+        return "คำร้องแก้ไข";
+      case "waiting-print":
+        return "คำร้องขออนุมัติจัดส่ง";
+      case "deliveried":
+        return "คำร้องจัดส่งแล้ว";
+      case "reject":
+        return "คำร้องที่ไม่อนุมัติ";
+      case "expired":
+        return "คำร้องหมดอายุ";
+      default:
+        return "";
+    }
+  };
+
   useEffect(() => {
     getForm(status, search, page);
   }, [status, page]);
 
   return (
     <div className="flex flex-col h-full gap-6 text-slate-700">
-      <p>คำร้องขอใหม่</p>
+      <p>{headerText()}</p>
       <div className="grid grid-cols-6 gap-4">
         {filters.map((filter, i) => (
           <AdminFilter

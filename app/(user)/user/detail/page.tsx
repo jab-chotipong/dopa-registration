@@ -93,7 +93,6 @@ const Page = () => {
 
   const getUser = async () => {
     let res = await userAPI.getMe(token!);
-    console.log(res.data.data.birthDate);
     res.data.data.birthDate = res.data.data.birthDate && {
       startDate: new Date(res.data.data.birthDate),
       endDate: new Date(res.data.data.birthDate),
@@ -134,6 +133,31 @@ const Page = () => {
       setError("newPassword2", {
         type: "notMatch",
         message: "รหัสผ่านไม่ตรงกัน",
+      });
+      return;
+    }
+
+    if (getValues("newPassword") == "") {
+      setError("newPassword", {
+        type: "required",
+      });
+    }
+
+    if (getValues("newPassword2") == "") {
+      setError("newPassword2", {
+        type: "required",
+      });
+      return;
+    }
+    if (getValues("newPassword").length < 8) {
+      setError("newPassword", {
+        type: "minLength",
+      });
+    }
+
+    if (getValues("newPassword2").length < 8) {
+      setError("newPassword2", {
+        type: "minLength",
       });
       return;
     }

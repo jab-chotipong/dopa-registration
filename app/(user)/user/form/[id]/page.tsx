@@ -67,7 +67,7 @@ const Form = () => {
     onConfirm: () => undefined,
     onCancel: () => undefined,
   });
-  const [reasonError, setReasonError] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const {
     handleSubmit,
@@ -79,7 +79,6 @@ const Form = () => {
     formState: { errors },
   } = methods;
   const onSubmit = handleSubmit(async (data: any) => {
-    console.log(data);
     if (data.formType !== "first-time") {
       if (!checkReason()) {
         return;
@@ -105,6 +104,7 @@ const Form = () => {
       let res = await formAPI.newForm(data, token!);
       if (res.status === 201) {
         setOpen(true);
+        setDisabled(true);
         setConfirmDialog({
           icon: <IoIosCheckmarkCircle className="w-12 h-12 text-green-500" />,
           desc: "ยื่นคำร้องสำเร็จ",
@@ -114,11 +114,12 @@ const Form = () => {
           onCancel: () => setOpen(false),
         });
       }
-    } catch (e) {
+    } catch (e: any) {
       setOpen(true);
       setConfirmDialog({
         icon: <MdError className="w-12 h-12 text-red-500" />,
-        desc: "พบข้อผิดพลาด",
+        desc:
+          e.status === 409 ? "ฟอร์มเก่าของคุณยังไม่หมดอายุ" : "พบข้อผิดพลาด",
         cancelText: "ปิด",
         onCancel: () => setOpen(false),
       });
@@ -182,7 +183,7 @@ const Form = () => {
   };
 
   const disabledField = () =>
-    getValues("status") !== "re-submit" && id !== "request";
+    (getValues("status") !== "re-submit" && id !== "request") || disabled;
 
   const getForm = async () => {
     if (id === "request") return;
@@ -496,7 +497,7 @@ const Form = () => {
                   <div>
                     <p className="text-sm text-slate-700">
                       ที่อยู่ : {address.registrationAddress.addressNumber} หมู่{" "}
-                      {address.registrationAddress.villageNumber} ถนน
+                      {address.registrationAddress.villageNumber} ถนน{" "}
                       {address.registrationAddress.road}{" "}
                       {address.registrationAddress.subDistrict}{" "}
                       {address.registrationAddress.district}{" "}
@@ -523,7 +524,7 @@ const Form = () => {
                   <span className="w-full h-[1px] bg-slate-200"></span>
                   <div>
                     <p className="text-sm text-slate-700">
-                      ที่อยู่ : {address.currentAddress.addressNumber} หมู่
+                      ที่อยู่ : {address.currentAddress.addressNumber} หมู่{" "}
                       {address.currentAddress.villageNumber} ถนน{" "}
                       {address.currentAddress.road}{" "}
                       {address.currentAddress.subDistrict}{" "}

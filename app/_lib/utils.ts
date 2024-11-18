@@ -41,7 +41,7 @@ export const handleStatus = (status: string) => {
     case "deliveried":
       return "จัดส่งแล้ว";
     case "reject":
-      return "ปฏิิเสธคำร้อง";
+      return "ปฏิเสธคำร้อง";
     default:
       return "-";
   }

@@ -24,8 +24,10 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
 
   const getForm = async () => {
-    const res = await formAPI.getMyForm(token!);
-    setForms(res.data.data);
+    try {
+      const res = await formAPI.getMyForm(token!);
+      setForms(res.data.data);
+    } catch (e) {}
     setLoading(false);
   };
 

@@ -51,12 +51,11 @@ const Page = () => {
   } = methods;
   const onSubmit = handleSubmit(async (data) => {
     delete data.password;
-    console.log(getValues("birthDate"));
-    if (getValues("birthDate") != null) {
-      data.birthDate = new Date(getValues("birthDate").startDate).toString();
-    } else {
-      setError("birthDate", { type: "required" });
-    }
+    // if (getValues("birthDate").startDate != null) {
+    data.birthDate = new Date(getValues("birthDate").startDate).toString();
+    // } else {
+    //   setError("birthDate", { type: "required" });
+    // }
     if (isSameAddress) {
       data.currentAddressNumber = getValues("registrationAddressNumber");
       data.currentVillageNumber = getValues("registrationVillageNumber");
@@ -80,11 +79,14 @@ const Page = () => {
           onCancel: () => setOpen(false),
         });
       }
-    } catch (e) {
+    } catch (e: any) {
       setOpen(true);
       setConfirmDialog({
         icon: <MdError className="w-12 h-12 text-red-500" />,
-        desc: "พบข้อผิดพลาด",
+        desc:
+          e.response.data.message == "this phoneNumber was used"
+            ? "เบอร์โทรศัพท์ถูกใช้ไปแล้ว"
+            : "พบข้อผิดพลาด",
         cancelText: "ปิด",
         onCancel: () => setOpen(false),
       });

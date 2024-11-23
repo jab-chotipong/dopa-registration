@@ -242,19 +242,19 @@ const Page = () => {
                 <PaginationItem>
                   <PaginationLink
                     href={`/admin/form-request?status=${status}&page=${
-                      page + 1
+                      parseInt(page) + 1
                     }&search=${search}`}
                   >
-                    {page + 1}
+                    {parseInt(page) + 1}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink
                     href={`/admin/form-request?status=${status}&page=${
-                      page + 2
+                      parseInt(page) + 2
                     }&search=${search}`}
                   >
-                    {page + 2}
+                    {parseInt(page) + 2}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>

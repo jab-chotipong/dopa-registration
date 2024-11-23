@@ -30,21 +30,25 @@ export const formAPI = {
     return _url(`/form/${id}/pdf`);
   },
 
+  patchForm: async (form: any, token: string) => {
+    return await _patch(`/form/${form.id}/me`, form, {
+      headers: {
+        authorization: token,
+      },
+    });
+  },
+
   updateFormStatus: async (
     token: string,
     id: string,
     userId: string,
-    status: string
+    data: any
   ) => {
-    return await _patch(
-      `/form/${id}/user/${userId}`,
-      { status },
-      {
-        headers: {
-          authorization: token,
-        },
-      }
-    );
+    return await _patch(`/form/${id}/user/${userId}`, data, {
+      headers: {
+        authorization: token,
+      },
+    });
   },
 
   getAllForm: async (token: string, query: any) => {

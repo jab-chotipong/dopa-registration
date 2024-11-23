@@ -20,7 +20,14 @@ const CalendarInput = (props: any) => {
     <Controller
       control={control}
       name={id}
-      rules={{ required: { value: required, message: "กรุณากรอกข้อมูล" } }}
+      rules={
+        asSingle
+          ? {
+              validate: (v) =>
+                (v != null && v.startDate != null) || "กรุณากรอกข้อมูล",
+            }
+          : { required: { value: required, message: "กรุณากรอกข้อมูล" } }
+      }
       render={({ field }) => (
         <div className={`grid w-full items-center gap-1.5`}>
           {label && (

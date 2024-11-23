@@ -13,6 +13,7 @@ type InputFileProps = {
   name: string;
   disabled?: boolean;
   required?: boolean;
+  isImage?: boolean;
   onClick?: () => void;
   rule?: RegisterOptions<FieldValues, string> | undefined;
 };
@@ -38,6 +39,8 @@ export function InputFile(props: InputFileProps) {
         return "กรุณาเพิ่มไฟล์";
       case "maximum":
         return "ขนาดไฟล์เกิน 2 MB";
+      case "acceptedFormats":
+        return "กรุณาใส่รูปภาพให้ถูกต้อง";
       default:
         return "";
     }
@@ -78,8 +81,16 @@ export function InputFile(props: InputFileProps) {
                 required: props.required,
                 validate: {
                   maximum: (v) => {
-                    if (v.length > 0)
+                    if (v?.length > 0)
                       return v[0]?.size < 2097152 || "ขนาดไฟล์เกิน 2 MB";
+                  },
+                  acceptedFormats: (files) => {
+                    if (file?.length > 0)
+                      return (
+                        ["image/jpeg", "image/png", "image/jpg"].includes(
+                          files[0]?.type
+                        ) || "กรุณาใส่รูปในนามสกุล jpeg, png"
+                      );
                   },
                 },
               })}
@@ -92,7 +103,7 @@ export function InputFile(props: InputFileProps) {
           {handleFileError(errors[props.name]?.type)}
         </p>
       )}
-      {file?.length > 0 && props.disabled && (
+      {file?.length > 0 && !props.disabled && (
         <IoMdClose
           onClick={() => {
             setValue(props.name, null);

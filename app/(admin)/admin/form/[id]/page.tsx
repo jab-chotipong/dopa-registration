@@ -57,12 +57,17 @@ const Page = () => {
   });
 
   const onSubmit = handleSubmit(async (data: any) => {
+    data.deliveryChannel = data.mockChannel;
+    delete data.others;
+    delete data.mockChannel;
+    data.trainingDate = data.trainingDate?.startDate;
+    data.birthDate = data.birthDate?.startDate;
     try {
       const res = await formAPI.updateFormStatus(
         token!,
         data.id,
         data.userId,
-        data.status
+        data
       );
       if (res.status === 200) {
         setOpen(true);
@@ -112,6 +117,7 @@ const Page = () => {
       startDate: data.trainingDate,
       endDate: data.trainingDate,
     };
+    setValue("mockChannel", data.deliveryChannel);
     return data;
   };
 
@@ -459,8 +465,8 @@ const Page = () => {
               <CheckboxWithText
                 id="others"
                 label="อื่นๆ(โปรดระบุ)"
-                value={getValues("others")}
-                onChange={() => setValue("others", !getValues("others"))}
+                value={getValues("otherReason") != null}
+                // onChange={() => getValues('otherReason'))}
                 disabled
               />
               <InputWithLabel type="string" disabled name="otherReason" />
@@ -654,7 +660,7 @@ const Page = () => {
                       อนุมัติ อยู่ระหว่างรอพิมพ์
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ">
                     <RadioGroupItem
                       value="deliveried"
                       id="deliveried"
@@ -667,6 +673,47 @@ const Page = () => {
                       จัดส่งแล้ว
                     </Label>
                   </div>
+                  {getValues("status") == "deliveried" && (
+                    // <Controller
+                    //   control={control}
+                    //   name="mockChannel"
+                    //   render={({ field }) => (
+                    //     <RadioGroup
+                    //       className="flex flex-col gap-8 ml-8"
+                    //       onValueChange={field.onChange}
+                    //       value={field.value}
+                    //     >
+                    //       <div className="flex items-center space-x-2">
+                    //         <RadioGroupItem
+                    //           value="self-received"
+                    //           id="self-received"
+                    //           className="border-slate-400"
+                    //         />
+                    //         <Label
+                    //           className="font-normal text-slate-800"
+                    //           htmlFor="self-received"
+                    //         >
+                    //           รับด้วยตัวเอง
+                    //         </Label>
+                    //       </div>
+                    //       <div className="flex items-center space-x-2">
+                    //         <RadioGroupItem
+                    //           value={getValues("deliveryChannel")}
+                    //           id={getValues("deliveryChannel")}
+                    //           className="border-slate-400"
+                    //         />
+                    //         <Label
+                    //           className="font-normal text-slate-800"
+                    //           htmlFor={getValues("deliveryChannel")}
+                    //         >
+                    //           ส่งไปรษณีย์
+                    //         </Label>
+                    //       </div>
+                    //     </RadioGroup>
+                    //   )}
+                    // />
+                    <></>
+                  )}
                 </RadioGroup>
               )}
             />

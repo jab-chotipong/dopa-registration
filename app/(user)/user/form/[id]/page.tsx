@@ -84,6 +84,7 @@ const Form = () => {
         return;
       }
     }
+    delete data.others;
     data.trainingDate = data.trainingDate?.startDate;
     data.copyCitizenId = data.copyCitizenId?.length
       ? data.copyCitizenId[0]
@@ -101,8 +102,13 @@ const Form = () => {
     data.policeReport = data.policeReport?.length ? data.policeReport[0] : null;
 
     try {
-      let res = await formAPI.newForm(data, token!);
-      if (res.status === 201) {
+      let res;
+      if (data.status == "re-submit") {
+        res = await formAPI.patchForm(data, token!);
+      } else {
+        res = await formAPI.newForm(data, token!);
+      }
+      if (res.status === 201 || res.status === 200) {
         setOpen(true);
         setDisabled(true);
         setConfirmDialog({
@@ -126,6 +132,7 @@ const Form = () => {
     }
   });
   const [formType] = watch(["formType"]);
+  const [other, setOther] = useState(getValues("otherReason"));
   const [
     isCardExpired,
     isCardLostorDestroy,
@@ -133,7 +140,7 @@ const Form = () => {
     isChangeFirstName,
     isChangeLastName,
     isChangeFullName,
-    others,
+    otherReason,
   ] = watch([
     "isCardExpired",
     "isCardLostorDestroy",
@@ -141,7 +148,7 @@ const Form = () => {
     "isChangeFirstName",
     "isChangeLastName",
     "isChangeFullName",
-    "others",
+    "otherReason",
   ]);
 
   const checkReason = () =>
@@ -151,7 +158,7 @@ const Form = () => {
     isChangeFirstName ||
     isChangeLastName ||
     isChangeFullName ||
-    others;
+    otherReason != null;
 
   const [noData, setNoData] = useState(false);
   const getUser = async () => {
@@ -402,19 +409,30 @@ const Form = () => {
             <CheckboxWithText
               id="others"
               label="อื่นๆ(โปรดระบุ)"
-              value={getValues("others")}
-              onChange={() => setValue("others", !getValues("others"))}
+              value={other || getValues("otherReason") != null}
+              onChange={() => {
+                setOther(!other);
+                if (
+                  getValues("otherReason") ||
+                  getValues("otherReason") == ""
+                ) {
+                  setOther(false);
+                  setValue("otherReason", null);
+                }
+              }}
               disabled={formType === "first-time" || disabledField()}
             />
             <InputWithLabel
               type="string"
               rule={{
                 required: {
-                  value: getValues("others"),
+                  value: other,
                   message: "กรุณากรอกข้อมูล",
                 },
               }}
-              disabled={!getValues("others") || disabledField()}
+              disabled={
+                !(other || getValues("otherReason") != null) || disabledField()
+              }
               name="otherReason"
             />
           </div>
@@ -538,7 +556,7 @@ const Form = () => {
             )}
           />
           {/* status === re-submit || id === request */}
-          {!disabledField() && (
+          {(getValues("status") == "re-submit" || id == "request") && (
             <div className="w-full flex items-center justify-center gap-8">
               <ConfirmationDialog
                 open={open}

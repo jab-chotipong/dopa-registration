@@ -42,6 +42,8 @@ export const handleStatus = (status: string) => {
       return "จัดส่งแล้ว";
     case "reject":
       return "ปฏิเสธคำร้อง";
+    case "expired":
+      return "หมดอายุ";
     default:
       return "-";
   }

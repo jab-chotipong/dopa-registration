@@ -8,7 +8,6 @@ import { FormProvider } from "react-hook-form";
 import { _post } from "@/app/_lib/apis/api";
 import { useEffect, useState } from "react";
 import Spinner from "@/app/_components/Spinner";
-import { IoIosCheckmarkCircle } from "react-icons/io";
 
 interface IFormInput {
   username: string;
@@ -93,6 +92,13 @@ const Page = () => {
           <Link href="/register" className="mt-12">
             ยังไม่เป็นสมาชิก?{" "}
             <span className="text-primary underline">สมัครสมาชิก</span>
+          </Link>
+          <Link
+            className="text-primary underline"
+            href="/DOPA Registration_User.pdf"
+            target="_blank"
+          >
+            คู่มือสมาชิก
           </Link>
         </form>
       )}

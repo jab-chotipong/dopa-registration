@@ -29,7 +29,7 @@ const Page = () => {
   const router = useRouter();
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-  const [isSameAddress, setIsSameAddress] = useState<boolean>(true);
+
   const [open, setOpen] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<any>({
     icon: null,
@@ -92,6 +92,8 @@ const Page = () => {
       });
     }
   });
+
+  const [isSameAddress, setIsSameAddress] = useState<boolean>(false);
 
   const getUser = async () => {
     let res = await userAPI.getMe(token!);

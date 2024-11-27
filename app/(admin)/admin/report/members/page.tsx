@@ -87,10 +87,10 @@ const Page = () => {
   const { handleSubmit, control, getValues, watch, setValue } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
-    getUser(status, data.search, page, formatSearchDate(data.date));
+    console.log(search);
+    getUser(status, search, page, formatSearchDate(data.date));
     router.push(
-      `/admin/report/members?status=${status}&search=${data.search}&page=${page}`
+      `/admin/report/members?status=${status}&search=${search}&page=${page}`
     );
   });
 
@@ -136,6 +136,19 @@ const Page = () => {
     window.open(url);
   };
 
+  const handleMemberStatus = (status: string) => {
+    switch (status) {
+      case "card-active":
+        return "มีสิทธิ์";
+      case "card-inactive":
+        return "ยังไม่มีสิทธิ์";
+      case "card-expired":
+        return "หมดอายุ";
+      default:
+        return "-";
+    }
+  };
+
   useEffect(() => {
     getUser(status, search, page);
   }, [status, page]);
@@ -160,7 +173,13 @@ const Page = () => {
       </div>
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className="flex gap-8">
-          <InputWithLabel type="string" name="search" placeholder="ค้นหา" />
+          <Input
+            type="string"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="ค้นหา"
+            className="bg-white w-full"
+          />
           <CalendarInput id="date" placeholder="วันที่" />
           <Button type="submit">ค้นหา</Button>
           <Button variant="secondary" type="button" onClick={exportUser}>
@@ -186,23 +205,27 @@ const Page = () => {
                 <TableCell>
                   {u.firstNameTh} {u.lastNameTh}
                 </TableCell>
-                <TableCell>คำร้องจัดส่งแล้ว</TableCell>
+                <TableCell>{handleMemberStatus(u.memberStatus)}</TableCell>
                 <TableCell>
-                  {dayjs(new Date(u.cardExpired))
-                    .locale("th")
-                    .format("DD/MM/YYYY")}
+                  {u.cardExpired
+                    ? dayjs(new Date(u.cardExpired))
+                        .locale("th")
+                        .format("DD/MM/YYYY")
+                    : "-"}
                 </TableCell>
                 <TableCell>{u.registrationProvince}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
         <Pagination className="items-end justify-end">
+          {/* TODO */}
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
                 href={`/admin/report/members?status=${status}&page=${
-                  parseInt(page) - 1
+                  parseInt(page) > 1 ? parseInt(page) - 1 : 1
                 }&search=${search}`}
               />
             </PaginationItem>
@@ -222,31 +245,67 @@ const Page = () => {
                 ))}
               </>
             ) : (
+              totalPage - parseInt(page) >= 3 && (
+                <>
+                  {parseInt(page) != 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/admin/report/members?status=${status}&page=${
+                          parseInt(page) - 1
+                        }&search=${search}`}
+                      >
+                        {parseInt(page) - 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink
+                      className={"text-primary"}
+                      href={`/admin/report/members?status=${status}&page=${page}&search=${search}`}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href={`/admin/report/members?status=${status}&page=${
+                        parseInt(page) + 1
+                      }&search=${search}`}
+                    >
+                      {parseInt(page) + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                  {parseInt(page) == 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/admin/report/members?status=${status}&page=${
+                          parseInt(page) + 2
+                        }&search=${search}`}
+                      >
+                        {parseInt(page) + 2}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href={`/admin/report/members?status=${status}&page=${totalPage}&search=${search}`}
+                    >
+                      {totalPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                </>
+              )
+            )}
+            {totalPage - parseInt(page) < 3 && totalPage > 4 && (
               <>
                 <PaginationItem>
                   <PaginationLink
-                    className={"text-primary"}
-                    href={`/admin/report/members?status=${status}&page=${page}&search=${search}`}
+                    href={`/admin/report/members?status=${status}&page=${1}&search=${search}`}
                   >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href={`/admin/report/members?status=${status}&page=${
-                      page + 1
-                    }&search=${search}`}
-                  >
-                    {page + 1}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href={`/admin/report/members?status=${status}&page=${
-                      page + 2
-                    }&search=${search}`}
-                  >
-                    {page + 2}
+                    {1}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
@@ -254,6 +313,33 @@ const Page = () => {
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink
+                    className={
+                      parseInt(page) === totalPage - 2 ? "text-primary" : ""
+                    }
+                    href={`/admin/report/members?status=${status}&page=${
+                      totalPage - 2
+                    }&search=${search}`}
+                  >
+                    {totalPage - 2}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    className={
+                      parseInt(page) === totalPage - 1 ? "text-primary" : ""
+                    }
+                    href={`/admin/report/members?status=${status}&page=${
+                      totalPage - 1
+                    }&search=${search}`}
+                  >
+                    {totalPage - 1}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    className={
+                      parseInt(page) === totalPage ? "text-primary" : ""
+                    }
                     href={`/admin/report/members?status=${status}&page=${totalPage}&search=${search}`}
                   >
                     {totalPage}
@@ -264,7 +350,9 @@ const Page = () => {
             <PaginationItem>
               <PaginationNext
                 href={`/admin/report/members?status=${status}&page=${
-                  parseInt(page) + 1
+                  parseInt(page) == totalPage
+                    ? parseInt(page)
+                    : parseInt(page) + 1
                 }&search=${search}`}
               />
             </PaginationItem>

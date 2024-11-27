@@ -1,7 +1,7 @@
 import React from "react";
 import NavList from "./NavList";
 import { PiSignOut } from "react-icons/pi";
-import { LuDot, LuUserCheck } from "react-icons/lu";
+import { LuBookOpenCheck, LuDot, LuUserCheck } from "react-icons/lu";
 import { FaRegEnvelope } from "react-icons/fa";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
@@ -125,11 +125,18 @@ const AdminSideNav = () => {
           </div>
         ))}
       </div>
-      <NavList
-        link={{ href: "/login" }}
-        icon={<PiSignOut />}
-        text="ออกจากระบบ"
-      />
+      <div>
+        <NavList
+          link={{ href: "/DOPA Registration_Admin.pdf", target: "_blank" }}
+          icon={<LuBookOpenCheck />}
+          text="คู่มือแอดมิน"
+        />
+        <NavList
+          link={{ href: "/login" }}
+          icon={<PiSignOut />}
+          text="ออกจากระบบ"
+        />
+      </div>
     </div>
   );
 };

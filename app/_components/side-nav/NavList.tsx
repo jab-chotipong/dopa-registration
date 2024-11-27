@@ -34,6 +34,7 @@ const NavList = ({ link, text, icon, type }: NavListProps) => {
   return (
     <Link
       href={{ pathname: link.href, query: link.query }}
+      target={link.target}
       className={`flex gap-2 pointer items-center justify-start py-4 px-2 text-sm rounded ${handleSelectedList()}`}
     >
       {icon}

@@ -57,9 +57,7 @@ const Page = () => {
   });
 
   const onSubmit = handleSubmit(async (data: any) => {
-    data.deliveryChannel = data.mockChannel;
     delete data.others;
-    delete data.mockChannel;
     data.trainingDate = data.trainingDate?.startDate;
     data.birthDate = data.birthDate?.startDate;
     try {
@@ -117,7 +115,9 @@ const Page = () => {
       startDate: data.trainingDate,
       endDate: data.trainingDate,
     };
-    setValue("mockChannel", data.deliveryChannel);
+    delete data.createdAt;
+    delete data.updatedAt;
+    delete data.formStatusChangeLogs;
     return data;
   };
 
@@ -526,7 +526,7 @@ const Page = () => {
                 <RadioGroup
                   onValueChange={field.onChange}
                   value={field.value}
-                  className="grid grid-cols-2 gap-16"
+                  className="grid grid-cols-3 gap-8"
                   disabled
                 >
                   <div className="w-full flex flex-col gap-4 p-4 rounded-lg border border-slate-300">
@@ -583,6 +583,23 @@ const Page = () => {
                         {getValues("currentPostalCode")}{" "}
                       </p>
                     </div>
+                  </div>
+                  <div className="w-full flex flex-col gap-4 p-4 rounded-lg border border-slate-300">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="self-received"
+                        id="self-received"
+                        className="border-slate-400"
+                      />
+                      <Label
+                        className="font-normal text-slate-800"
+                        htmlFor="self-received"
+                      >
+                        รับด้วยตัวเอง
+                      </Label>
+                    </div>
+                    <span className="w-full h-[1px] bg-slate-200"></span>
+                    <div></div>
                   </div>
                 </RadioGroup>
               )}
@@ -674,45 +691,62 @@ const Page = () => {
                     </Label>
                   </div>
                   {getValues("status") == "deliveried" && (
-                    // <Controller
-                    //   control={control}
-                    //   name="mockChannel"
-                    //   render={({ field }) => (
-                    //     <RadioGroup
-                    //       className="flex flex-col gap-8 ml-8"
-                    //       onValueChange={field.onChange}
-                    //       value={field.value}
-                    //     >
-                    //       <div className="flex items-center space-x-2">
-                    //         <RadioGroupItem
-                    //           value="self-received"
-                    //           id="self-received"
-                    //           className="border-slate-400"
-                    //         />
-                    //         <Label
-                    //           className="font-normal text-slate-800"
-                    //           htmlFor="self-received"
-                    //         >
-                    //           รับด้วยตัวเอง
-                    //         </Label>
-                    //       </div>
-                    //       <div className="flex items-center space-x-2">
-                    //         <RadioGroupItem
-                    //           value={getValues("deliveryChannel")}
-                    //           id={getValues("deliveryChannel")}
-                    //           className="border-slate-400"
-                    //         />
-                    //         <Label
-                    //           className="font-normal text-slate-800"
-                    //           htmlFor={getValues("deliveryChannel")}
-                    //         >
-                    //           ส่งไปรษณีย์
-                    //         </Label>
-                    //       </div>
-                    //     </RadioGroup>
-                    //   )}
-                    // />
-                    <></>
+                    <Controller
+                      control={control}
+                      name="deliveryChannel"
+                      render={({ field }) => (
+                        <RadioGroup
+                          className="flex flex-col gap-8 ml-8"
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="registration-address"
+                              id="registration-address"
+                              className="border-slate-400"
+                            />
+                            <Label
+                              className="font-normal text-slate-800"
+                              htmlFor="registration-address"
+                            >
+                              ที่อยู่ตามทะเบียนบ้าน
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="current-address"
+                              id="current-address"
+                              className="border-slate-400"
+                            />
+                            <Label
+                              className="font-normal text-slate-800"
+                              htmlFor="current-address"
+                            >
+                              ที่อยู่ปัจจุบัน
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="self-received"
+                              id="self-received"
+                              className="border-slate-400"
+                            />
+                            <Label
+                              className="font-normal text-slate-800"
+                              htmlFor="self-received"
+                            >
+                              รับด้วยตัวเอง
+                            </Label>
+                          </div>
+                          <InputWithLabel
+                            label=""
+                            name="adminNote"
+                            placeholder="ข้อมูลเพิ่มเติม..."
+                          />
+                        </RadioGroup>
+                      )}
+                    />
                   )}
                 </RadioGroup>
               )}

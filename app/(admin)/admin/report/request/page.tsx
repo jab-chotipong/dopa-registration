@@ -105,9 +105,9 @@ const Page = () => {
   const { handleSubmit, control, getValues, watch, setValue } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    getForm(status, data.search, page, formatSearchDate(data.date));
+    getForm(status, search, page, formatSearchDate(data.date));
     router.push(
-      `/admin/report/request?status=${status}&search=${data.search}&page=${page}`
+      `/admin/report/request?status=${status}&search=${search}&page=${page}`
     );
   });
 
@@ -190,7 +190,13 @@ const Page = () => {
       </div>
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className="flex gap-8">
-          <InputWithLabel type="string" name="search" placeholder="ค้นหา" />
+          <Input
+            type="string"
+            placeholder="ค้นหา"
+            className="bg-white w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <CalendarInput id="date" placeholder="วันที่" />
           <Button type="submit">ค้นหา</Button>
           <Button variant="secondary" type="button" onClick={exportForm}>
@@ -234,9 +240,14 @@ const Page = () => {
           </TableBody>
         </Table>
         <Pagination className="items-end justify-end">
+          {/* TODO */}
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                href={`/admin/report/request?status=${status}&page=${
+                  parseInt(page) > 1 ? parseInt(page) - 1 : 1
+                }&search=${search}`}
+              />
             </PaginationItem>
             {totalPage <= 4 ? (
               <>
@@ -254,31 +265,67 @@ const Page = () => {
                 ))}
               </>
             ) : (
+              totalPage - parseInt(page) >= 3 && (
+                <>
+                  {parseInt(page) != 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/admin/report/request?status=${status}&page=${
+                          parseInt(page) - 1
+                        }&search=${search}`}
+                      >
+                        {parseInt(page) - 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink
+                      className={"text-primary"}
+                      href={`/admin/report/request?status=${status}&page=${page}&search=${search}`}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href={`/admin/report/request?status=${status}&page=${
+                        parseInt(page) + 1
+                      }&search=${search}`}
+                    >
+                      {parseInt(page) + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                  {parseInt(page) == 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/admin/report/request?status=${status}&page=${
+                          parseInt(page) + 2
+                        }&search=${search}`}
+                      >
+                        {parseInt(page) + 2}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href={`/admin/report/request?status=${status}&page=${totalPage}&search=${search}`}
+                    >
+                      {totalPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                </>
+              )
+            )}
+            {totalPage - parseInt(page) < 3 && totalPage > 4 && (
               <>
                 <PaginationItem>
                   <PaginationLink
-                    className={"text-primary"}
-                    href={`/admin/report/request?status=${status}&page=${page}&search=${search}`}
+                    href={`/admin/report/request?status=${status}&page=${1}&search=${search}`}
                   >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href={`/admin/report/request?status=${status}&page=${
-                      page + 1
-                    }&search=${search}`}
-                  >
-                    {page + 1}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href={`/admin/report/request?status=${status}&page=${
-                      page + 2
-                    }&search=${search}`}
-                  >
-                    {page + 2}
+                    {1}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
@@ -286,6 +333,33 @@ const Page = () => {
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink
+                    className={
+                      parseInt(page) === totalPage - 2 ? "text-primary" : ""
+                    }
+                    href={`/admin/report/request?status=${status}&page=${
+                      totalPage - 2
+                    }&search=${search}`}
+                  >
+                    {totalPage - 2}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    className={
+                      parseInt(page) === totalPage - 1 ? "text-primary" : ""
+                    }
+                    href={`/admin/report/request?status=${status}&page=${
+                      totalPage - 1
+                    }&search=${search}`}
+                  >
+                    {totalPage - 1}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    className={
+                      parseInt(page) === totalPage ? "text-primary" : ""
+                    }
                     href={`/admin/report/request?status=${status}&page=${totalPage}&search=${search}`}
                   >
                     {totalPage}
@@ -294,7 +368,13 @@ const Page = () => {
               </>
             )}
             <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                href={`/admin/report/request?status=${status}&page=${
+                  parseInt(page) == totalPage
+                    ? parseInt(page)
+                    : parseInt(page) + 1
+                }&search=${search}`}
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

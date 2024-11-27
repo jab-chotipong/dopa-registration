@@ -85,7 +85,7 @@ export function InputFile(props: InputFileProps) {
                       return v[0]?.size < 2097152 || "ขนาดไฟล์เกิน 2 MB";
                   },
                   acceptedFormats: (files) => {
-                    if (file?.length > 0)
+                    if (file?.length > 0 && props.name == "image")
                       return (
                         ["image/jpeg", "image/png", "image/jpg"].includes(
                           files[0]?.type

@@ -47,7 +47,6 @@ const Page = () => {
                 <TableHead>ประเภทคำร้อง</TableHead>
                 <TableHead>ข้อมูลเพิ่มเติม</TableHead>
                 <TableHead>สถานะ</TableHead>
-                <TableHead>รายละเอียด</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -68,7 +67,6 @@ const Page = () => {
                   <TableCell className="align-top">
                     {handleStatus(f.status)}
                   </TableCell>
-                  <TableCell>-</TableCell>
                 </TableRow>
               ))}
             </TableBody>

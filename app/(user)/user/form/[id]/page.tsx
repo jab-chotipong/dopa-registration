@@ -15,6 +15,7 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import { MdError } from "react-icons/md";
 import { useRouter, useParams } from "next/navigation";
 import { fileAPI } from "@/app/_lib/apis/file";
+import { handleStatus } from "@/app/_lib/utils";
 
 const Form = () => {
   const router = useRouter();
@@ -79,6 +80,7 @@ const Form = () => {
     formState: { errors },
   } = methods;
   const onSubmit = handleSubmit(async (data: any) => {
+    console.log(data.copyCitizenId[0]);
     if (data.formType !== "first-time") {
       if (!checkReason()) {
         return;
@@ -86,20 +88,92 @@ const Form = () => {
     }
     delete data.others;
     data.trainingDate = data.trainingDate?.startDate;
-    data.copyCitizenId = data.copyCitizenId?.length
-      ? data.copyCitizenId[0]
-      : null;
-    data.image = data.image?.length ? data.image[0] : null;
-    data.copyRadioCard = data.copyRadioCard?.length
-      ? data.copyRadioCard[0]
-      : null;
-    data.departmentCertificate = data.departmentCertificate?.length
-      ? data.departmentCertificate[0]
-      : null;
-    data.copyTrainingClass = data.copyTrainingClass?.length
-      ? data.copyTrainingClass[0]
-      : null;
-    data.policeReport = data.policeReport?.length ? data.policeReport[0] : null;
+    if (typeof data.copyCitizenId == "string" || data.copyCitizenId == null) {
+      delete data.copyCitizenId;
+    } else {
+      data.copyCitizenId = data.copyCitizenId?.length
+        ? data.copyCitizenId[0]
+        : null;
+      await fileAPI.patchFile({
+        id: data.id,
+        file: { field: "copyCitizenId", file: data.copyCitizenId },
+        token: token,
+      });
+    }
+    if (typeof data.image == "string" || data.image == null) {
+      delete data.image;
+    } else {
+      data.image = data.image?.length ? data.image[0] : null;
+      await fileAPI.patchFile({
+        id: data.id,
+        file: { field: "image", file: data.image },
+        token: token,
+      });
+    }
+    if (typeof data.copyRadioCard == "string" || data.copyRadioCard == null) {
+      delete data.copyRadioCard;
+    } else {
+      data.copyRadioCard = data.copyRadioCard?.length
+        ? data.copyRadioCard[0]
+        : null;
+      console.log(data.copyRadioCard);
+      await fileAPI.patchFile({
+        id: data.id,
+        file: { field: "copyRadioCard", file: data.copyRadioCard },
+        token: token,
+      });
+    }
+    if (
+      typeof data.departmentCertificate == "string" ||
+      data.departmentCertificate == null
+    ) {
+      delete data.departmentCertificate;
+    } else {
+      data.departmentCertificate = data.departmentCertificate?.length
+        ? data.departmentCertificate[0]
+        : null;
+      await fileAPI.patchFile({
+        id: data.id,
+        file: {
+          field: "departmentCertificate",
+          file: data.departmentCertificate,
+        },
+        token: token,
+      });
+    }
+    if (
+      typeof data.copyTrainingClass == "string" ||
+      data.copyTrainingClass == null
+    ) {
+      delete data.copyTrainingClass;
+    } else {
+      data.copyTrainingClass = data.copyTrainingClass?.length
+        ? data.copyTrainingClass[0]
+        : null;
+      await fileAPI.patchFile({
+        id: data.id,
+        file: {
+          field: "copyTrainingClass",
+          file: data.copyTrainingClass,
+        },
+        token: token,
+      });
+    }
+    if (typeof data.policeReport == "string" || data.policeReport == null) {
+      delete data.policeReport;
+    } else {
+      data.policeReport = data.policeReport?.length
+        ? data.policeReport[0]
+        : null;
+      await fileAPI.patchFile({
+        id: data.id,
+        file: {
+          field: "policeReport",
+          file: data.policeReport,
+        },
+        token: token,
+      });
+    }
 
     try {
       let res;
@@ -200,6 +274,9 @@ const Form = () => {
       startDate: new Date(data.trainingDate).toDateString(),
       endDate: new Date(data.trainingDate).toDateString(),
     };
+    delete data.createdAt;
+    delete data.updatedAt;
+    delete data.formStatusChangeLogs;
     return data;
   };
 
@@ -494,7 +571,7 @@ const Form = () => {
               <RadioGroup
                 onValueChange={field.onChange}
                 value={field.value}
-                className="grid grid-cols-2 gap-16"
+                className="grid grid-cols-3 gap-16"
                 disabled={disabledField()}
               >
                 <div className="w-full flex flex-col gap-4 p-4 rounded-lg border border-slate-300">
@@ -552,6 +629,23 @@ const Form = () => {
                     </p>
                   </div>
                 </div>
+                <div className="w-full flex flex-col gap-4 p-4 rounded-lg border border-slate-300">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="self-received"
+                      id="self-received"
+                      className="border-slate-400"
+                    />
+                    <Label
+                      className="font-normal text-slate-800"
+                      htmlFor="self-received"
+                    >
+                      รับด้วยตัวเอง
+                    </Label>
+                  </div>
+                  <span className="w-full h-[1px] bg-slate-200"></span>
+                  <div></div>
+                </div>
               </RadioGroup>
             )}
           />
@@ -573,6 +667,9 @@ const Form = () => {
               </ConfirmationDialog>
             </div>
           )}
+          <span className="w-full h-[1px] bg-slate-200"></span>
+          <p>สถานะ : {handleStatus(getValues("status"))}</p>
+          <p>ข้อมูลการจัดส่ง : {getValues("adminNote")}</p>
         </div>
       </form>
     </FormProvider>

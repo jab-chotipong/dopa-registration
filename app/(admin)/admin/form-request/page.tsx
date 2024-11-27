@@ -212,7 +212,11 @@ const Page = () => {
           {/* TODO */}
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                href={`/admin/form-request?status=${status}&page=${
+                  parseInt(page) > 1 ? parseInt(page) - 1 : 1
+                }&search=${search}`}
+              />
             </PaginationItem>
             {totalPage <= 4 ? (
               <>
@@ -230,31 +234,67 @@ const Page = () => {
                 ))}
               </>
             ) : (
+              totalPage - parseInt(page) >= 3 && (
+                <>
+                  {parseInt(page) != 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/admin/form-request?status=${status}&page=${
+                          parseInt(page) - 1
+                        }&search=${search}`}
+                      >
+                        {parseInt(page) - 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink
+                      className={"text-primary"}
+                      href={`/admin/form-request?status=${status}&page=${page}&search=${search}`}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href={`/admin/form-request?status=${status}&page=${
+                        parseInt(page) + 1
+                      }&search=${search}`}
+                    >
+                      {parseInt(page) + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                  {parseInt(page) == 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href={`/admin/form-request?status=${status}&page=${
+                          parseInt(page) + 2
+                        }&search=${search}`}
+                      >
+                        {parseInt(page) + 2}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href={`/admin/form-request?status=${status}&page=${totalPage}&search=${search}`}
+                    >
+                      {totalPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                </>
+              )
+            )}
+            {totalPage - parseInt(page) < 3 && totalPage > 4 && (
               <>
                 <PaginationItem>
                   <PaginationLink
-                    className={"text-primary"}
-                    href={`/admin/form-request?status=${status}&page=${page}&search=${search}`}
+                    href={`/admin/form-request?status=${status}&page=${1}&search=${search}`}
                   >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href={`/admin/form-request?status=${status}&page=${
-                      parseInt(page) + 1
-                    }&search=${search}`}
-                  >
-                    {parseInt(page) + 1}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href={`/admin/form-request?status=${status}&page=${
-                      parseInt(page) + 2
-                    }&search=${search}`}
-                  >
-                    {parseInt(page) + 2}
+                    {1}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
@@ -262,6 +302,33 @@ const Page = () => {
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink
+                    className={
+                      parseInt(page) === totalPage - 2 ? "text-primary" : ""
+                    }
+                    href={`/admin/form-request?status=${status}&page=${
+                      totalPage - 2
+                    }&search=${search}`}
+                  >
+                    {totalPage - 2}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    className={
+                      parseInt(page) === totalPage - 1 ? "text-primary" : ""
+                    }
+                    href={`/admin/form-request?status=${status}&page=${
+                      totalPage - 1
+                    }&search=${search}`}
+                  >
+                    {totalPage - 1}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    className={
+                      parseInt(page) === totalPage ? "text-primary" : ""
+                    }
                     href={`/admin/form-request?status=${status}&page=${totalPage}&search=${search}`}
                   >
                     {totalPage}
@@ -270,7 +337,13 @@ const Page = () => {
               </>
             )}
             <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                href={`/admin/form-request?status=${status}&page=${
+                  parseInt(page) == totalPage
+                    ? parseInt(page)
+                    : parseInt(page) + 1
+                }&search=${search}`}
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

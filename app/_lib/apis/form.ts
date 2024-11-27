@@ -34,6 +34,7 @@ export const formAPI = {
     return await _patch(`/form/${form.id}/me`, form, {
       headers: {
         authorization: token,
+        // "Content-Type": "multipart/form-data",
       },
     });
   },
@@ -47,6 +48,7 @@ export const formAPI = {
     return await _patch(`/form/${id}/user/${userId}`, data, {
       headers: {
         authorization: token,
+        // "Content-Type": "multipart/form-data",
       },
     });
   },

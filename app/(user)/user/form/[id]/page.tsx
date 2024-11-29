@@ -80,7 +80,6 @@ const Form = () => {
     formState: { errors },
   } = methods;
   const onSubmit = handleSubmit(async (data: any) => {
-    console.log(data.copyCitizenId[0]);
     if (data.formType !== "first-time") {
       if (!checkReason()) {
         return;
@@ -94,21 +93,23 @@ const Form = () => {
       data.copyCitizenId = data.copyCitizenId?.length
         ? data.copyCitizenId[0]
         : null;
-      await fileAPI.patchFile({
-        id: data.id,
-        file: { field: "copyCitizenId", file: data.copyCitizenId },
-        token: token,
-      });
+      if (id !== "request")
+        await fileAPI.patchFile({
+          id: data.id,
+          file: { field: "copyCitizenId", file: data.copyCitizenId },
+          token: token,
+        });
     }
     if (typeof data.image == "string" || data.image == null) {
       delete data.image;
     } else {
       data.image = data.image?.length ? data.image[0] : null;
-      await fileAPI.patchFile({
-        id: data.id,
-        file: { field: "image", file: data.image },
-        token: token,
-      });
+      if (id !== "request")
+        await fileAPI.patchFile({
+          id: data.id,
+          file: { field: "image", file: data.image },
+          token: token,
+        });
     }
     if (typeof data.copyRadioCard == "string" || data.copyRadioCard == null) {
       delete data.copyRadioCard;
@@ -116,12 +117,12 @@ const Form = () => {
       data.copyRadioCard = data.copyRadioCard?.length
         ? data.copyRadioCard[0]
         : null;
-      console.log(data.copyRadioCard);
-      await fileAPI.patchFile({
-        id: data.id,
-        file: { field: "copyRadioCard", file: data.copyRadioCard },
-        token: token,
-      });
+      if (id !== "request")
+        await fileAPI.patchFile({
+          id: data.id,
+          file: { field: "copyRadioCard", file: data.copyRadioCard },
+          token: token,
+        });
     }
     if (
       typeof data.departmentCertificate == "string" ||
@@ -132,14 +133,15 @@ const Form = () => {
       data.departmentCertificate = data.departmentCertificate?.length
         ? data.departmentCertificate[0]
         : null;
-      await fileAPI.patchFile({
-        id: data.id,
-        file: {
-          field: "departmentCertificate",
-          file: data.departmentCertificate,
-        },
-        token: token,
-      });
+      if (id !== "request")
+        await fileAPI.patchFile({
+          id: data.id,
+          file: {
+            field: "departmentCertificate",
+            file: data.departmentCertificate,
+          },
+          token: token,
+        });
     }
     if (
       typeof data.copyTrainingClass == "string" ||
@@ -150,14 +152,15 @@ const Form = () => {
       data.copyTrainingClass = data.copyTrainingClass?.length
         ? data.copyTrainingClass[0]
         : null;
-      await fileAPI.patchFile({
-        id: data.id,
-        file: {
-          field: "copyTrainingClass",
-          file: data.copyTrainingClass,
-        },
-        token: token,
-      });
+      if (id !== "request")
+        await fileAPI.patchFile({
+          id: data.id,
+          file: {
+            field: "copyTrainingClass",
+            file: data.copyTrainingClass,
+          },
+          token: token,
+        });
     }
     if (typeof data.policeReport == "string" || data.policeReport == null) {
       delete data.policeReport;
@@ -165,14 +168,15 @@ const Form = () => {
       data.policeReport = data.policeReport?.length
         ? data.policeReport[0]
         : null;
-      await fileAPI.patchFile({
-        id: data.id,
-        file: {
-          field: "policeReport",
-          file: data.policeReport,
-        },
-        token: token,
-      });
+      if (id !== "request")
+        await fileAPI.patchFile({
+          id: data.id,
+          file: {
+            field: "policeReport",
+            file: data.policeReport,
+          },
+          token: token,
+        });
     }
 
     try {

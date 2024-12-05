@@ -38,7 +38,7 @@ export function InputFile(props: InputFileProps) {
       case 'required':
         return 'กรุณาเพิ่มไฟล์'
       case 'maximum':
-        return 'ขนาดไฟล์เกิน 2 MB'
+        return 'ขนาดไฟล์เกิน 5 MB'
       case 'acceptedFormats':
         return 'กรุณาใส่รูปภาพให้ถูกต้อง'
       default:

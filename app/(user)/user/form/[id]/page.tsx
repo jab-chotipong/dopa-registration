@@ -297,7 +297,7 @@ const Form = () => {
   }
 
   const getFile = (file: string) => {
-    if (!getValues(file)) return
+    if (!getValues(file) || id === 'request') return
     const res = fileAPI.getFile({
       id: id != 'request' ? btoa(getValues('userId')) : btoa(getValues('id')),
       fileName:

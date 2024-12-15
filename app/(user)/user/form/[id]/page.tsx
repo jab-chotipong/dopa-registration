@@ -59,6 +59,14 @@ const Form = () => {
       postalCode: '',
     },
   })
+  const [tempFile, setTempFile] = useState({
+    copyCitizenId: '',
+    image: '',
+    copyRadioCard: '',
+    departmentCertificate: '',
+    copyTrainingClass: '',
+    policeReport: '',
+  })
   const [open, setOpen] = useState<boolean>(false)
   const [confirmDialog, setConfirmDialog] = useState<any>({
     icon: null,
@@ -87,8 +95,12 @@ const Form = () => {
     }
     delete data.others
     data.trainingDate = data.trainingDate?.startDate
-    if (typeof data.copyCitizenId == 'string' || data.copyCitizenId == null) {
+    if (typeof data.copyCitizenId == 'string') {
       delete data.copyCitizenId
+    } else if (data.copyCitizenId == null && tempFile.copyCitizenId != null) {
+      try {
+        await fileAPI.deleteFile(tempFile.copyCitizenId, token!)
+      } catch (e) {}
     } else {
       data.copyCitizenId = data.copyCitizenId?.length
         ? data.copyCitizenId[0]
@@ -102,8 +114,12 @@ const Form = () => {
         delete data.copyCitizenId
       }
     }
-    if (typeof data.image == 'string' || data.image == null) {
+    if (typeof data.image == 'string') {
       delete data.image
+    } else if (data.image == null && tempFile.image != null) {
+      try {
+        await fileAPI.deleteFile(tempFile.image, token!)
+      } catch (e) {}
     } else {
       data.image = data.image?.length ? data.image[0] : null
       if (id !== 'request') {
@@ -115,8 +131,12 @@ const Form = () => {
         delete data.image
       }
     }
-    if (typeof data.copyRadioCard == 'string' || data.copyRadioCard == null) {
+    if (typeof data.copyRadioCard == 'string') {
       delete data.copyRadioCard
+    } else if (data.copyRadioCard == null && tempFile.copyRadioCard != null) {
+      try {
+        await fileAPI.deleteFile(tempFile.copyRadioCard, token!)
+      } catch (e) {}
     } else {
       data.copyRadioCard = data.copyRadioCard?.length
         ? data.copyRadioCard[0]
@@ -130,11 +150,15 @@ const Form = () => {
         delete data.copyRadioCard
       }
     }
-    if (
-      typeof data.departmentCertificate == 'string' ||
-      data.departmentCertificate == null
-    ) {
+    if (typeof data.departmentCertificate == 'string') {
       delete data.departmentCertificate
+    } else if (
+      data.departmentCertificate == null &&
+      tempFile.departmentCertificate != null
+    ) {
+      try {
+        await fileAPI.deleteFile(tempFile.departmentCertificate, token!)
+      } catch (e) {}
     } else {
       data.departmentCertificate = data.departmentCertificate?.length
         ? data.departmentCertificate[0]
@@ -151,11 +175,15 @@ const Form = () => {
         delete data.departmentCertificate
       }
     }
-    if (
-      typeof data.copyTrainingClass == 'string' ||
-      data.copyTrainingClass == null
-    ) {
+    if (typeof data.copyTrainingClass == 'string') {
       delete data.copyTrainingClass
+    } else if (
+      data.copyTrainingClass == null &&
+      tempFile.copyTrainingClass != null
+    ) {
+      try {
+        await fileAPI.deleteFile(tempFile.copyTrainingClass, token!)
+      } catch (e) {}
     } else {
       data.copyTrainingClass = data.copyTrainingClass?.length
         ? data.copyTrainingClass[0]
@@ -172,8 +200,12 @@ const Form = () => {
         delete data.copyTrainingClass
       }
     }
-    if (typeof data.policeReport == 'string' || data.policeReport == null) {
+    if (typeof data.policeReport == 'string') {
       delete data.policeReport
+    } else if (data.policeReport == null && tempFile.policeReport != null) {
+      try {
+        await fileAPI.deleteFile(tempFile.policeReport, token!)
+      } catch (e) {}
     } else {
       data.policeReport = data.policeReport?.length
         ? data.policeReport[0]
@@ -290,6 +322,14 @@ const Form = () => {
       startDate: new Date(data.trainingDate).toDateString(),
       endDate: new Date(data.trainingDate).toDateString(),
     }
+    setTempFile({
+      copyCitizenId: data.copyCitizenId,
+      image: data.image,
+      copyRadioCard: data.copyRadioCard,
+      departmentCertificate: data.departmentCertificate,
+      copyTrainingClass: data.copyTrainingClass,
+      policeReport: data.policeReport,
+    })
     delete data.createdAt
     delete data.updatedAt
     delete data.formStatusChangeLogs

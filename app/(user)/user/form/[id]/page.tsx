@@ -95,7 +95,10 @@ const Form = () => {
     }
     delete data.others
     data.trainingDate = data.trainingDate?.startDate
-    if (typeof data.copyCitizenId == 'string') {
+    if (
+      typeof data.copyCitizenId == 'string' ||
+      (tempFile.copyCitizenId == null && data.copyCitizenId == null)
+    ) {
       delete data.copyCitizenId
     } else if (data.copyCitizenId == null && tempFile.copyCitizenId != null) {
       try {
@@ -114,7 +117,10 @@ const Form = () => {
         delete data.copyCitizenId
       }
     }
-    if (typeof data.image == 'string') {
+    if (
+      typeof data.image == 'string' ||
+      (tempFile.image == null && data.image == null)
+    ) {
       delete data.image
     } else if (data.image == null && tempFile.image != null) {
       try {
@@ -131,7 +137,10 @@ const Form = () => {
         delete data.image
       }
     }
-    if (typeof data.copyRadioCard == 'string') {
+    if (
+      typeof data.copyRadioCard == 'string' ||
+      (tempFile.copyRadioCard == null && data.copyRadioCard == null)
+    ) {
       delete data.copyRadioCard
     } else if (data.copyRadioCard == null && tempFile.copyRadioCard != null) {
       try {
@@ -150,7 +159,11 @@ const Form = () => {
         delete data.copyRadioCard
       }
     }
-    if (typeof data.departmentCertificate == 'string') {
+    if (
+      typeof data.departmentCertificate == 'string' ||
+      (tempFile.departmentCertificate == null &&
+        data.departmentCertificate == null)
+    ) {
       delete data.departmentCertificate
     } else if (
       data.departmentCertificate == null &&
@@ -175,7 +188,10 @@ const Form = () => {
         delete data.departmentCertificate
       }
     }
-    if (typeof data.copyTrainingClass == 'string') {
+    if (
+      typeof data.copyTrainingClass == 'string' ||
+      (tempFile.copyTrainingClass == null && data.copyTrainingClass == null)
+    ) {
       delete data.copyTrainingClass
     } else if (
       data.copyTrainingClass == null &&
@@ -200,7 +216,10 @@ const Form = () => {
         delete data.copyTrainingClass
       }
     }
-    if (typeof data.policeReport == 'string') {
+    if (
+      typeof data.policeReport == 'string' ||
+      (tempFile.policeReport == null && data.policeReport == null)
+    ) {
       delete data.policeReport
     } else if (data.policeReport == null && tempFile.policeReport != null) {
       try {

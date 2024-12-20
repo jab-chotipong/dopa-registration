@@ -91,7 +91,8 @@ const Page = () => {
   })
 
   const onSubmit = handleSubmit(async (data) => {
-    getUser(status, search, page, formatSearchDate(data.date))
+    console.log(data)
+    getUser(status, search, page)
     router.push(
       `/admin/report/members?status=${status}&search=${search}&page=${page}`
     )
@@ -112,10 +113,10 @@ const Page = () => {
     })
     const res = await userAPI.getUser(token!, {
       status,
-      search: prevSearch.term,
+      search,
       page,
-      startDate: prevSearch.date?.startDate || null,
-      endDate: prevSearch.date?.endDate || null,
+      // startDate: prevSearch.date?.startDate || null,
+      // endDate: prevSearch.date?.endDate || null,
       size: 10,
     })
     const { pagination, data, statusCount } = res.data.data
@@ -135,7 +136,7 @@ const Page = () => {
     const q = date?.startDate && date?.endDate ? formatSearchDate(date) : null
     const res = await userAPI.exportUser(
       {
-        search: getValues('search'),
+        search: prevSearch.term,
         status,
         startDate: q ? q.startDate : null,
         endDate: q ? q.endDate : null,
@@ -182,16 +183,18 @@ const Page = () => {
         ))}
       </div>
       <FormProvider {...methods}>
-        <form onSubmit={onSubmit} className='flex gap-8'>
-          <Input
-            type='string'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder='ค้นหา'
-            className='bg-white w-full'
-          />
-          <CalendarInput id='date' placeholder='วันที่' />
-          <Button type='submit'>ค้นหา</Button>
+        <form onSubmit={onSubmit} className='flex justify-between gap-8'>
+          <div className='flex gap-8'>
+            <Input
+              type='string'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder='ค้นหา'
+              className='bg-white w-[300px]'
+            />
+            {/* <CalendarInput id='date' placeholder='วันที่' /> */}
+            <Button type='submit'>ค้นหา</Button>
+          </div>
           <Button variant='secondary' type='button' onClick={exportUser}>
             ดาวน์โหลด
           </Button>

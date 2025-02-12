@@ -746,7 +746,7 @@ const Form = () => {
             </div>
           )}
           <span className='w-full h-[1px] bg-slate-200'></span>
-          <p>สถานะ : {handleStatus(getValues('status'))}</p>
+          <p>สถานะ : {handleStatus(getValues('status'), 'user')}</p>
           <p>ข้อมูลการจัดส่ง : {getValues('adminNote')}</p>
         </div>
       </form>

@@ -1,9 +1,9 @@
-"use client";
-import AdminFilter from "@/app/_components/AdminFilter";
-import { formAPI } from "@/app/_lib/apis/form";
-import { handleFormType, handleStatus } from "@/app/_lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+'use client'
+import AdminFilter from '@/app/_components/AdminFilter'
+import { formAPI } from '@/app/_lib/apis/form'
+import { handleFormType, handleStatus } from '@/app/_lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Pagination,
   PaginationContent,
@@ -12,7 +12,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination'
 import {
   Table,
   TableBody,
@@ -20,23 +20,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import dayjs from "dayjs";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { IoIosCheckmarkCircleOutline, IoIosSearch } from "react-icons/io";
-import { LuFileEdit } from "react-icons/lu";
-import { MdOutlineCancel, MdOutlineNoteAdd } from "react-icons/md";
-import { TbFileInfo } from "react-icons/tb";
-import { VscSend } from "react-icons/vsc";
+} from '@/components/ui/table'
+import dayjs from 'dayjs'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { IoIosCheckmarkCircleOutline, IoIosSearch } from 'react-icons/io'
+import { LuFileEdit } from 'react-icons/lu'
+import { MdOutlineCancel, MdOutlineNoteAdd } from 'react-icons/md'
+import { TbFileInfo } from 'react-icons/tb'
+import { VscSend } from 'react-icons/vsc'
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouter()
   const token =
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-  const searchParams = useSearchParams();
-  const [forms, setForms] = useState([]);
+    typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
+  const searchParams = useSearchParams()
+  const [forms, setForms] = useState([])
 
   const [statusCount, setStatusCount] = useState<any>({
     deliveriedCount: 0,
@@ -45,56 +45,56 @@ const Page = () => {
     rejectCount: 0,
     submitCount: 0,
     waitingPrintCount: 0,
-  });
+  })
   const [filters, setFilters] = useState([
     {
-      text: "คำร้องใหม่",
-      status: "submit",
-      icon: <MdOutlineNoteAdd className="text-blue-600 text-xl" />,
-      color: "blue",
-      count: "submitCount",
+      text: 'คำร้องใหม่',
+      status: 'submit',
+      icon: <MdOutlineNoteAdd className='text-blue-600 text-xl' />,
+      color: 'blue',
+      count: 'submitCount',
     },
     {
-      text: "คำร้องแก้ไข",
-      status: "re-submit",
-      icon: <LuFileEdit className="text-orange-600 text-xl" />,
-      color: "orange",
-      count: "reSubmitCount",
+      text: 'คำร้องแก้ไข',
+      status: 're-submit',
+      icon: <LuFileEdit className='text-orange-600 text-xl' />,
+      color: 'orange',
+      count: 'reSubmitCount',
     },
     {
-      text: "คำร้องขออนุมัติจัดส่ง",
-      status: "waiting-print",
-      icon: <IoIosCheckmarkCircleOutline className="text-green-600 text-xl" />,
-      color: "green",
-      count: "waitingPrintCount",
+      text: 'คำร้องขออนุมัติจัดส่ง',
+      status: 'waiting-print',
+      icon: <IoIosCheckmarkCircleOutline className='text-green-600 text-xl' />,
+      color: 'green',
+      count: 'waitingPrintCount',
     },
     {
-      text: "คำร้องจัดส่งแล้ว",
-      status: "deliveried",
-      icon: <VscSend className="text-yellow-600 text-xl" />,
-      color: "yellow",
-      count: "deliveriedCount",
+      text: 'คำร้องจัดส่งแล้ว',
+      status: 'deliveried',
+      icon: <VscSend className='text-yellow-600 text-xl' />,
+      color: 'yellow',
+      count: 'deliveriedCount',
     },
     {
-      text: "คำร้องที่ไม่อนุมัติ",
-      status: "reject",
-      icon: <MdOutlineCancel className="text-red-600 text-xl" />,
-      color: "red",
-      count: "rejectCount",
+      text: 'คำร้องที่ไม่อนุมัติ',
+      status: 'reject',
+      icon: <MdOutlineCancel className='text-red-600 text-xl' />,
+      color: 'red',
+      count: 'rejectCount',
     },
     {
-      text: "คำร้องหมดอายุ",
-      status: "expired",
-      icon: <TbFileInfo className="text-purple-600 text-xl" />,
-      color: "purple",
-      count: "expiredCount",
+      text: 'คำร้องหมดอายุ',
+      status: 'expired',
+      icon: <TbFileInfo className='text-purple-600 text-xl' />,
+      color: 'purple',
+      count: 'expiredCount',
     },
-  ]);
-  const [page] = useState(searchParams.get("page") || "1");
-  const [search, setSearch] = useState(searchParams.get("search") || "");
-  const [totalPage, setTotalPage] = useState(0);
+  ])
+  const [page] = useState(searchParams.get('page') || '1')
+  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [totalPage, setTotalPage] = useState(0)
 
-  const status = searchParams.get("status");
+  const status = searchParams.get('status')
 
   const getForm = async (
     status: string | null,
@@ -106,45 +106,45 @@ const Page = () => {
       search,
       page,
       size: 7,
-    });
-    const { pagination, data, statusCount } = res.data.data;
-    setForms(data);
-    setStatusCount(statusCount);
-    setTotalPage(pagination.totalPages);
-  };
+    })
+    const { pagination, data, statusCount } = res.data.data
+    setForms(data)
+    setStatusCount(statusCount)
+    setTotalPage(pagination.totalPages)
+  }
 
   const submitSearch = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    getForm(status, search, page);
-  };
+    e.preventDefault()
+    getForm(status, search, page)
+  }
 
   const headerText = () => {
     switch (status) {
-      case "submit":
-        return "คำร้องใหม่";
-      case "re-submit":
-        return "คำร้องแก้ไข";
-      case "waiting-print":
-        return "คำร้องขออนุมัติจัดส่ง";
-      case "deliveried":
-        return "คำร้องจัดส่งแล้ว";
-      case "reject":
-        return "คำร้องที่ไม่อนุมัติ";
-      case "expired":
-        return "คำร้องหมดอายุ";
+      case 'submit':
+        return 'คำร้องใหม่'
+      case 're-submit':
+        return 'คำร้องแก้ไข'
+      case 'waiting-print':
+        return 'คำร้องขออนุมัติจัดส่ง'
+      case 'deliveried':
+        return 'คำร้องจัดส่งแล้ว'
+      case 'reject':
+        return 'คำร้องที่ไม่อนุมัติ'
+      case 'expired':
+        return 'คำร้องหมดอายุ'
       default:
-        return "";
+        return ''
     }
-  };
+  }
 
   useEffect(() => {
-    getForm(status, search, page);
-  }, [status, page]);
+    getForm(status, search, page)
+  }, [status, page])
 
   return (
-    <div className="flex flex-col h-full w-full gap-6 text-slate-700">
+    <div className='flex flex-col h-full w-full gap-6 text-slate-700'>
       <p>{headerText()}</p>
-      <div className="grid grid-cols-6 gap-4 w-full">
+      <div className='grid grid-cols-6 gap-4 w-full'>
         {filters.map((filter, i) => (
           <AdminFilter
             key={i}
@@ -157,17 +157,17 @@ const Page = () => {
           />
         ))}
       </div>
-      <form onSubmit={submitSearch} className="flex gap-4">
+      <form onSubmit={submitSearch} className='flex gap-4'>
         <Input
-          type="string"
+          type='string'
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="ค้นหา"
-          className="bg-white w-72"
+          placeholder='ค้นหา'
+          className='bg-white w-72'
         />
-        <Button type="submit">ค้นหา</Button>
+        <Button type='submit'>ค้นหา</Button>
       </form>
 
-      <div className="bg-slate-50 h-full w-full rounded-xl flex flex-col justify-between">
+      <div className='bg-slate-50 h-full w-full rounded-xl flex flex-col justify-between'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -190,15 +190,21 @@ const Page = () => {
                   </TableCell>
                   <TableCell>
                     {dayjs(new Date(form.createdAt))
-                      .locale("th")
-                      .format("DD/MM/YYYY")}
+                      .locale('th')
+                      .format('DD/MM/YYYY')}
                   </TableCell>
                   <TableCell>{handleFormType(form.formType)}</TableCell>
                   <TableCell>
                     {form.firstNameTh} {form.lastNameTh}
                   </TableCell>
                   <TableCell>{form.currentProvince}</TableCell>
-                  <TableCell>{handleStatus(form.status)}</TableCell>
+                  <TableCell
+                    className={`${
+                      form.isUpdateByUser ? 'text-green-600 font-bold' : ''
+                    }`}
+                  >
+                    {handleStatus(form.status)}
+                  </TableCell>
                   <TableCell>
                     <Link href={`/admin/form/${form.id}`}>
                       <Button>คลิก</Button>
@@ -208,7 +214,7 @@ const Page = () => {
               ))}
           </TableBody>
         </Table>
-        <Pagination className="items-end justify-end">
+        <Pagination className='items-end justify-end'>
           {/* TODO */}
           <PaginationContent>
             <PaginationItem>
@@ -223,7 +229,7 @@ const Page = () => {
                 {[...Array(totalPage)].map((p, i) => (
                   <PaginationItem key={i}>
                     <PaginationLink
-                      className={parseInt(page) == i + 1 ? "text-primary" : ""}
+                      className={parseInt(page) == i + 1 ? 'text-primary' : ''}
                       href={`/admin/form-request?status=${status}&page=${
                         i + 1
                       }&search=${search}`}
@@ -249,7 +255,7 @@ const Page = () => {
                   )}
                   <PaginationItem>
                     <PaginationLink
-                      className={"text-primary"}
+                      className={'text-primary'}
                       href={`/admin/form-request?status=${status}&page=${page}&search=${search}`}
                     >
                       {page}
@@ -303,7 +309,7 @@ const Page = () => {
                 <PaginationItem>
                   <PaginationLink
                     className={
-                      parseInt(page) === totalPage - 2 ? "text-primary" : ""
+                      parseInt(page) === totalPage - 2 ? 'text-primary' : ''
                     }
                     href={`/admin/form-request?status=${status}&page=${
                       totalPage - 2
@@ -315,7 +321,7 @@ const Page = () => {
                 <PaginationItem>
                   <PaginationLink
                     className={
-                      parseInt(page) === totalPage - 1 ? "text-primary" : ""
+                      parseInt(page) === totalPage - 1 ? 'text-primary' : ''
                     }
                     href={`/admin/form-request?status=${status}&page=${
                       totalPage - 1
@@ -327,7 +333,7 @@ const Page = () => {
                 <PaginationItem>
                   <PaginationLink
                     className={
-                      parseInt(page) === totalPage ? "text-primary" : ""
+                      parseInt(page) === totalPage ? 'text-primary' : ''
                     }
                     href={`/admin/form-request?status=${status}&page=${totalPage}&search=${search}`}
                   >
@@ -349,7 +355,7 @@ const Page = () => {
         </Pagination>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

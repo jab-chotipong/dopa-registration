@@ -1,7 +1,7 @@
-"use client";
-import Spinner from "@/app/_components/Spinner";
-import { formAPI } from "@/app/_lib/apis/form";
-import { handleFormType, handleStatus } from "@/app/_lib/utils";
+'use client'
+import Spinner from '@/app/_components/Spinner'
+import { formAPI } from '@/app/_lib/apis/form'
+import { handleFormType, handleStatus } from '@/app/_lib/utils'
 import {
   Table,
   TableBody,
@@ -9,38 +9,38 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import React, { useEffect, useState } from "react";
-import { TbReportOff } from "react-icons/tb";
-import dayjs from "dayjs";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/table'
+import React, { useEffect, useState } from 'react'
+import { TbReportOff } from 'react-icons/tb'
+import dayjs from 'dayjs'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouter()
   const token =
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-  const [forms, setForms] = useState([]);
-  const [loading, setLoading] = useState(true);
+    typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
+  const [forms, setForms] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const getForm = async () => {
     try {
-      const res = await formAPI.getMyForm(token!);
-      setForms(res.data.data);
+      const res = await formAPI.getMyForm(token!)
+      setForms(res.data.data)
     } catch (e) {}
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   useEffect(() => {
-    getForm();
-  }, []);
+    getForm()
+  }, [])
 
   return (
-    <div className="flex flex-col h-full gap-4 pt-4  md:w-full overflow-auto md:pt-0">
-      <p className="pl-4">ตรวจสอบสถานะ</p>
-      <div className="bg-slate-50 rounded-xl h-full border text-slate-700">
+    <div className='flex flex-col h-full gap-4 pt-4  md:w-full overflow-auto md:pt-0'>
+      <p className='pl-4'>ตรวจสอบสถานะ</p>
+      <div className='bg-slate-50 rounded-xl h-full border text-slate-700'>
         {forms.length > 0 ? (
-          <Table className="overflow-x-auto">
+          <Table className='overflow-x-auto'>
             <TableHeader>
               <TableRow>
                 <TableHead>วันที่</TableHead>
@@ -55,35 +55,35 @@ const Page = () => {
                   key={f.id}
                   onClick={() => router.push(`/user/form/${f.id}`)}
                 >
-                  <TableCell className="align-top">
+                  <TableCell className='align-top'>
                     {dayjs(new Date(f.createdAt))
-                      .locale("th")
-                      .format("DD/MM/YYYY")}
+                      .locale('th')
+                      .format('DD/MM/YYYY')}
                   </TableCell>
-                  <TableCell className="align-top">
+                  <TableCell className='align-top'>
                     {handleFormType(f.formType)}
                   </TableCell>
-                  <TableCell className="align-top">{f.remark}</TableCell>
-                  <TableCell className="align-top">
-                    {handleStatus(f.status)}
+                  <TableCell className='align-top'>{f.remark}</TableCell>
+                  <TableCell className='align-top'>
+                    {handleStatus(f.status, 'user')}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         ) : loading ? (
-          <div className="w-full p-8 h-full flex items-center justify-center sm:items-start sm:justify-start">
+          <div className='w-full p-8 h-full flex items-center justify-center sm:items-start sm:justify-start'>
             <Spinner />
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-            <TbReportOff className="w-24 h-24" />
+          <div className='w-full h-full flex flex-col items-center justify-center gap-4'>
+            <TbReportOff className='w-24 h-24' />
             <p>ไม่พบการขอใบอนุญาต</p>
           </div>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

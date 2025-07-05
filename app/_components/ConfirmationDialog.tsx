@@ -8,20 +8,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { ReactNode } from 'react'
 
 interface ConfirmationDialogProps {
-  children?: React.ReactNode;
-  open: boolean;
-  setOpen?: () => void;
-  title?: string;
-  desc: string;
-  icon?: React.ReactNode;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm?: () => void;
-  onCancel?: () => void;
+  children?: React.ReactNode
+  open: boolean
+  setOpen?: () => void
+  title?: string
+  desc: string | ReactNode
+  icon?: React.ReactNode
+  confirmText?: string
+  cancelText?: string
+  onConfirm?: () => void
+  onCancel?: () => void
 }
 
 const ConfirmationDialog = (props: ConfirmationDialogProps) => {
@@ -31,7 +32,7 @@ const ConfirmationDialog = (props: ConfirmationDialogProps) => {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{props.title}</AlertDialogTitle>
-          <AlertDialogDescription className="flex gap-4 items-center justify-center flex-col">
+          <AlertDialogDescription className='flex gap-4 items-center justify-center flex-col'>
             {props.icon}
             {props.desc}
           </AlertDialogDescription>
@@ -50,7 +51,7 @@ const ConfirmationDialog = (props: ConfirmationDialogProps) => {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
-};
+  )
+}
 
-export default ConfirmationDialog;
+export default ConfirmationDialog

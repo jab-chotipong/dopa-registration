@@ -22,6 +22,7 @@ import React, { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaCheckCircle } from 'react-icons/fa'
 import { FiHome, FiUser } from 'react-icons/fi'
+import { FaRegFileAlt } from 'react-icons/fa'
 import { IoIosCheckmarkCircle } from 'react-icons/io'
 import { MdError } from 'react-icons/md'
 
@@ -39,6 +40,12 @@ const Page = () => {
     onConfirm: () => undefined,
     onCancel: () => undefined,
   })
+  const consentString =
+    'ข้าพเจ้าให้ความยินยอมในการใช้งานระบบ Dopa Registration ทั้งนี้ ก่อนการแสดงเจตนา ข้าพเจ้าได้อ่านรายละเอียดจากเอกสารชี้แจงข้อมูล หรือได้รับคำอธิบายจากกรมการปกครอง ถึงวัตถุประสงค์ในการเก็บรวบรวม ใช้หรือเปิดเผย (“ประมวลผล”) ข้อมูลส่วนบุคคล และมีความเข้าใจดีแล้ว'
+  const consentString2 =
+    'ข้าพเจ้าให้ความยินยอมหรือปฏิเสธไม่ให้ความยินยอมในเอกสารนี้ด้วยความสมัครใจ ปราศจากการบังคับหรือชักจูง และข้าพเจ้าทราบว่าข้าพเจ้าสามารถถอนความยินยอมนี้เสียเมื่อใดก็ได้เว้นแต่ในกรณีมีข้อจำกัดสิทธิตามกฎหมายหรือยังมีสัญญาระหว่างข้าพเจ้ากับกรมการปกครอง ที่ให้ประโยชน์แก่ข้าพเจ้าอยู่'
+  const consentString3 =
+    'กรณีที่ข้าพเจ้าประสงค์จะขอถอนความยินยอม ข้าพเจ้าทราบว่าการถอนความยินยอมจะมีผลทำให้ไม่สามารถใช้งานระบบ Dopa Registration ได้ และข้าพเจ้าทราบว่าการถอนความยินยอมดังกล่าว ไม่มีผลกระทบต่อการประมวลผลข้อมูลส่วนบุคคลที่ได้ดำเนินการเสร็จสิ้นไปแล้วก่อนการถอนความยินยอม'
 
   const methods = useForm({ defaultValues: async () => await getUser() })
   const {
@@ -94,6 +101,8 @@ const Page = () => {
   })
 
   const [isSameAddress, setIsSameAddress] = useState<boolean>(false)
+  const [isAccept, setIsAccept] = useState<boolean>(false)
+  const [openConsent, setOpenConsent] = useState<boolean>(false)
 
   const getUser = async () => {
     let res = await userAPI.getMe(token!)
@@ -484,6 +493,52 @@ const Page = () => {
           )}
         </div>
 
+        <div className='flex gap-4 items-center px-4 py-2  rounded-xl bg-gray-300'>
+          <FaRegFileAlt className='text-gray-700' />
+          <p className='text-gray-700'>เงื่อนไขและข้อตกลง</p>
+        </div>
+        <div className='flex flex-col items-center gap-4 w-full'>
+          <a
+            className='underline text-blue-600 cursor-pointer'
+            onClick={() => setOpenConsent(true)}
+          >
+            กรุณาอ่านและยอมรับเงื่อนไขและข้อตกลงก่อนบันทึกข้อมูล
+          </a>
+          {/* <CheckboxWithText
+            label='ยอมรับเงื่อนไขและข้อตกลง'
+            id='isAccept'
+            value={isAccept}
+            className='sm:col-span-3'
+            onChange={() => setIsAccept(!isAccept)}
+          /> */}
+        </div>
+
+        {openConsent && (
+          <div className='w-full flex items-center justify-center gap-8'>
+            <ConfirmationDialog
+              open={openConsent}
+              title={'เงื่อนไขและข้อตกลง'}
+              desc={
+                <>
+                  &emsp;{consentString} <br />
+                  &emsp;{consentString2} <br />
+                  &emsp;{consentString3}
+                </>
+              }
+              confirmText={'ยอมรับ'}
+              cancelText={'ปิด'}
+              onConfirm={() => {
+                setIsAccept(true)
+                setOpenConsent(false)
+              }}
+              onCancel={() => {
+                setIsAccept(false)
+                setOpenConsent(false)
+              }}
+            ></ConfirmationDialog>
+          </div>
+        )}
+
         <div className='w-full flex items-center justify-center gap-8'>
           <ConfirmationDialog
             open={open}
@@ -494,7 +549,7 @@ const Page = () => {
             onConfirm={confirmDialog.onConfirm}
             onCancel={confirmDialog.onCancel}
           >
-            <Button className='w-28' type='submit'>
+            <Button className='w-28' type='submit' disabled={!isAccept}>
               บันทึกข้อมูล
             </Button>
           </ConfirmationDialog>
